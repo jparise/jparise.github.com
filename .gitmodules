@@ -1,0 +1,3 @@
+[submodule "pwdcomposer"]
+	path = pwdcomposer
+	url = git://github.com/jparise/pwdcomposer.git
