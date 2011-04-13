@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<title>Python in PHP</title>
+<meta name="author" content="Jon Parise" />
+<meta name="date" content="2008-09-29" />
+<link rel="stylesheet" href="/css/php.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="python-in-php">
+<h1 class="title">Python in PHP</h1>
+<h2 class="subtitle" id="users-guide">Users Guide</h2>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>Jon Parise</td></tr>
+<tr><th class="docinfo-name">Contact:</th>
+<td><a class="first last reference external" href="mailto:jon&#37;&#52;&#48;php&#46;net">jon<span>&#64;</span>php<span>&#46;</span>net</a></td></tr>
+<tr><th class="docinfo-name">Date:</th>
+<td>2008-09-29</td></tr>
+<tr><th class="docinfo-name">Revision:</th>
+<td>1.2</td></tr>
+</tbody>
+</table>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="auto-toc simple">
+<li><a class="reference internal" href="#overview" id="id1">1&nbsp;&nbsp;&nbsp;Overview</a><ul class="auto-toc">
+<li><a class="reference internal" href="#requirements" id="id2">1.1&nbsp;&nbsp;&nbsp;Requirements</a></li>
+<li><a class="reference internal" href="#installation" id="id3">1.2&nbsp;&nbsp;&nbsp;Installation</a></li>
+<li><a class="reference internal" href="#source-code" id="id4">1.3&nbsp;&nbsp;&nbsp;Source Code</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#usage" id="id5">2&nbsp;&nbsp;&nbsp;Usage</a><ul class="auto-toc">
+<li><a class="reference internal" href="#ini-settings" id="id6">2.1&nbsp;&nbsp;&nbsp;INI Settings</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#development-and-support" id="id7">3&nbsp;&nbsp;&nbsp;Development and Support</a><ul class="auto-toc">
+<li><a class="reference internal" href="#reporting-problems-and-suggestions" id="id8">3.1&nbsp;&nbsp;&nbsp;Reporting Problems and Suggestions</a></li>
+<li><a class="reference internal" href="#coming-soon" id="id9">3.2&nbsp;&nbsp;&nbsp;Coming Soon</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="overview">
+<h1>1&nbsp;&nbsp;&nbsp;Overview</h1>
+<div class="section" id="requirements">
+<h2>1.1&nbsp;&nbsp;&nbsp;Requirements</h2>
+<p>The Python extension has the following system requirements:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://www.php.net/">PHP</a> version 5.2.0 or later</li>
+<li><a class="reference external" href="http://pear.php.net/">PEAR</a> installer version 1.4.3 or later</li>
+</ul>
+</div>
+<div class="section" id="installation">
+<h2>1.2&nbsp;&nbsp;&nbsp;Installation</h2>
+<p>The easiest way to install the Perforce extension is by using the PECL
+installer:</p>
+<pre class="literal-block">
+pecl install python
+</pre>
+<p>If you're building from source code, should use the <tt class="docutils literal"><span class="pre">--with-python</span></tt>
+configuration option.  If your copy of the Python hasn't been installed in one
+of the default locations, you can specify it as a parameter:</p>
+<pre class="literal-block">
+--with-python=/opt/python
+</pre>
+<p>More detailed information on installing PECL packages in general can be found
+in the <a class="reference external" href="http://www.php.net/manual/install.pecl.php">Installation of PECL Extensions</a> section of the <a class="reference external" href="http://www.php.net/manual/">PHP Manual</a>.</p>
+</div>
+<div class="section" id="source-code">
+<h2>1.3&nbsp;&nbsp;&nbsp;Source Code</h2>
+<p>This package's source code is hosted the <a class="reference external" href="http://www.php.net/anoncvs.php">PHP CVS repository</a>.  To check out
+a read-only (anonymous) copy of the source code, start by logging in to the
+PHP CVS server.  The password for the <tt class="docutils literal"><span class="pre">cvsread</span></tt> account is <tt class="docutils literal"><span class="pre">phpfi</span></tt>.</p>
+<pre class="literal-block">
+cvs -d :pserver:cvsread&#64;cvs.php.net:/repository login
+</pre>
+<p>Then you'll be able to check out the Python's extension's source code:</p>
+<pre class="literal-block">
+cvs -d :pserver:cvsread&#64;cvs.php.net:/repository co -d python pecl/python
+</pre>
+<p>A number of unit tests are included to help maintain correct and expected
+behavior.  The tests can be run using PECL tool's <tt class="docutils literal"><span class="pre">run-tests</span></tt> command:</p>
+<pre class="literal-block">
+pecl run-tests -p python
+</pre>
+<p>Additional unit test contributions are welcome, especially when they increase
+code coverage or exercise specific use cases.</p>
+</div>
+</div>
+<div class="section" id="usage">
+<h1>2&nbsp;&nbsp;&nbsp;Usage</h1>
+<div class="section" id="ini-settings">
+<h2>2.1&nbsp;&nbsp;&nbsp;INI Settings</h2>
+<div class="section" id="python-optimize">
+<h3>2.1.1&nbsp;&nbsp;&nbsp;python.optimize</h3>
+<p>The <tt class="docutils literal"><span class="pre">python.optimize</span></tt> INI setting controls the Python interpreter's runtime
+optimization level.  This is a global, system-wide setting and therefore can
+only be set in the PHP.ini file.</p>
+<p>When set to <strong>0</strong> (the default), no additional optimizations are enabled, and
+the built-in <tt class="docutils literal"><span class="pre">__debug__</span></tt> flag is True.</p>
+<p>When set to <strong>1</strong> (equivalent to Python's <tt class="docutils literal"><span class="pre">-O</span></tt> command line option), the
+Python interpreter will generate optimized bytecode, and the built-in
+<tt class="docutils literal"><span class="pre">__debug__</span></tt> flag is set to False.</p>
+<p>When set to <strong>2</strong> (equivalent to Python's <tt class="docutils literal"><span class="pre">-OO</span></tt> command line option), the
+Python doc-strings will be removed in addition to the above optimizations.</p>
+</div>
+</div>
+</div>
+<div class="section" id="development-and-support">
+<h1>3&nbsp;&nbsp;&nbsp;Development and Support</h1>
+<div class="section" id="reporting-problems-and-suggestions">
+<h2>3.1&nbsp;&nbsp;&nbsp;Reporting Problems and Suggestions</h2>
+<p>If you run into a problem or would like to make a suggestion, please use the
+<a class="reference external" href="http://pecl.php.net/bugs/">PECL Bug Tracker</a>.  Feel free to contact me directly for other issues, but
+please try to use the bug tracker whenever possible so that others in the
+community will benefit from your feedback and my responses.</p>
+<ul class="simple">
+<li><a class="reference external" href="http://pecl.php.net/bugs/search.php?cmd=display&amp;status=Open&amp;package_name[]=python">Open Bugs</a></li>
+<li><a class="reference external" href="http://pecl.php.net/bugs/report.php?package=python">Report a New Bug</a></li>
+</ul>
+</div>
+<div class="section" id="coming-soon">
+<h2>3.2&nbsp;&nbsp;&nbsp;Coming Soon</h2>
+<p>This section contains a list of &quot;todo&quot; items that will hopefully be addressed
+in future releases.</p>
+<ul class="simple">
+<li><em>No items at this time.</em></li>
+</ul>
+<p>If you have feature suggestions, please submit them using the <a class="reference external" href="http://pecl.php.net/bugs/">PECL Bug
+Tracker</a>.</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr class="footer" />
+<a class="reference external" href="guide.txt">View document source</a>.
+Generated on: 2008-10-04 22:20 UTC.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-6933602-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>

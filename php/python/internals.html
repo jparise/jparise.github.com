@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<title>Python in PHP: Internals</title>
+<meta name="author" content="Jon Parise" />
+<meta name="date" content="$Date: $" />
+<link rel="stylesheet" href="http://static.indelible.org/css/docutils-php.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="python-in-php-internals">
+<h1 class="title">Python in PHP: Internals</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>Jon Parise</td></tr>
+<tr><th class="docinfo-name">Contact:</th>
+<td><a class="first last reference external" href="mailto:jon&#37;&#52;&#48;php&#46;net">jon<span>&#64;</span>php<span>&#46;</span>net</a></td></tr>
+<tr><th class="docinfo-name">Date:</th>
+<td>$Date: $</td></tr>
+<tr><th class="docinfo-name">Revision:</th>
+<td>$Revision: $</td></tr>
+</tbody>
+</table>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="auto-toc simple">
+<li><a class="reference internal" href="#embedded-python" id="id1">1&nbsp;&nbsp;&nbsp;Embedded Python</a><ul class="auto-toc">
+<li><a class="reference internal" href="#thread-state" id="id2">1.1&nbsp;&nbsp;&nbsp;Thread State</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="embedded-python">
+<h1>1&nbsp;&nbsp;&nbsp;Embedded Python</h1>
+<div class="section" id="thread-state">
+<h2>1.1&nbsp;&nbsp;&nbsp;Thread State</h2>
+<p>The Python in PHP extension uses Python's native thread state API to manage
+thread state within the process's main Python interpreter.</p>
+<p>Each PHP request has its own, private Python sub-interpreter.  This
+interpreter and its associated thread state is created at the start of the
+request via a call to <a class="reference external" href="http://docs.python.org/dev/c-api/init.html#Py_NewInterpreter">Py_NewInterpreter()</a>.  The interpreter's thread state
+is stored in a request global for access throughout the lifetime of the
+request.  When the request is shut down, the interpreter and thread state are
+destroyed via a call to <a class="reference external" href="http://docs.python.org/dev/c-api/init.html#Py_EndInterpreter">Py_EndInterpreter()</a>.</p>
+<p>The request's sub-interpreter is a private execution environment within the
+process's main Python interpreter.  This means that each request's interpreter
+has its own, unique set of imported modules (including <tt class="docutils literal"><span class="pre">__builtin__</span></tt>,
+<tt class="docutils literal"><span class="pre">__main__</span></tt>, and <tt class="docutils literal"><span class="pre">sys</span></tt>).  It also means that state from one request's
+Python environment won't &quot;leak&quot; into other requests' environments.</p>
+<p>Whenever the Python extension accesses Python's C API, it must first acquire
+the current request's thread state.  Once it's done interacting with the
+Python C API, the thread state is released.  These operations are handled by
+the <tt class="docutils literal"><span class="pre">PHP_PYTHON_THREAD_ACQUIRE()</span></tt> and <tt class="docutils literal"><span class="pre">PHP_PYTHON_THREAD_RELEASE()</span></tt>
+macros:</p>
+<pre class="literal-block">
+PHP_FUNCTION(python_version)
+{
+    const char *version;
+
+    PHP_PYTHON_THREAD_ACQUIRE();
+    version = Py_GetVersion();
+    PHP_PYTHON_THREAD_RELEASE();
+
+    RETURN_STRING((char *)version, 0);
+}
+</pre>
+<p>Some of the extension's internal helper functions (notably, the type
+conversion functions) also require the thread state to be held while they
+access the Python C API.  These functions simply assert that the appropriate
+thread state has already been acquired by their calling context.</p>
+<pre class="literal-block">
+int pyobject_to_zval_string(PyObject *o, zval *zv TSRMLS_DC)
+{
+    PHP_PYTHON_THREAD_ASSERT();
+
+    if (PyString_Check(o)) {
+        ZVAL_STRINGL(zv, PyString_AS_STRING(o), PyString_GET_SIZE(o), 1);
+        return SUCCESS;
+    }
+
+    return FAILURE;
+}
+</pre>
+<p>Note that calls to <tt class="docutils literal"><span class="pre">PHP_PYTHON_THREAD_ACQUIRE()</span></tt> and
+<tt class="docutils literal"><span class="pre">PHP_PYTHON_THREAD_RELEASE()</span></tt> <strong>do not</strong> nest.  Also, failure to release
+thread state after it is acquire may lead to unexpected behavior.  It is
+important to ensure that <tt class="docutils literal"><span class="pre">PHP_PYTHON_THREAD_RELEASE()</span></tt> is called by all code
+paths that exit a function while the thread state is still being held.</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr class="footer" />
+<a class="reference external" href="internals.txt">View document source</a>.
+Generated on: 2008-09-19 05:44 UTC.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<title>The FSM Package</title>
+<meta name="author" content="Jon Parise" />
+<meta name="date" content="2008-02-10" />
+<link rel="stylesheet" href="/css/php.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="the-fsm-package">
+<h1 class="title">The FSM Package</h1>
+<h2 class="subtitle" id="user-documentation">User Documentation</h2>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>Jon Parise</td></tr>
+<tr><th class="docinfo-name">Contact:</th>
+<td><a class="first last reference external" href="mailto:jon&#37;&#52;&#48;php&#46;net">jon<span>&#64;</span>php<span>&#46;</span>net</a></td></tr>
+<tr><th class="docinfo-name">Date:</th>
+<td>2008-02-10</td></tr>
+<tr><th class="docinfo-name">Revision:</th>
+<td>1.3</td></tr>
+</tbody>
+</table>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="auto-toc simple">
+<li><a class="reference internal" href="#about-the-fsm-package" id="id1">1&nbsp;&nbsp;&nbsp;About the FSM Package</a></li>
+<li><a class="reference internal" href="#building-a-finite-state-machine" id="id2">2&nbsp;&nbsp;&nbsp;Building a Finite State Machine</a><ul class="auto-toc">
+<li><a class="reference internal" href="#creating-a-new-fsm-object" id="id3">2.1&nbsp;&nbsp;&nbsp;Creating a New FSM Object</a></li>
+<li><a class="reference internal" href="#defining-transitions" id="id4">2.2&nbsp;&nbsp;&nbsp;Defining Transitions</a></li>
+<li><a class="reference internal" href="#setting-default-transitions" id="id5">2.3&nbsp;&nbsp;&nbsp;Setting Default Transitions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#plotting-a-state-machine" id="id6">3&nbsp;&nbsp;&nbsp;Plotting a State Machine</a></li>
+<li><a class="reference internal" href="#development-and-support" id="id7">4&nbsp;&nbsp;&nbsp;Development and Support</a><ul class="auto-toc">
+<li><a class="reference internal" href="#reporting-problems-and-suggestions" id="id8">4.1&nbsp;&nbsp;&nbsp;Reporting Problems and Suggestions</a></li>
+<li><a class="reference internal" href="#coming-soon" id="id9">4.2&nbsp;&nbsp;&nbsp;Coming Soon</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+<script type="text/javascript"><!--
+google_ad_client = "pub-2870165208827543";
+google_ad_slot = "5798808179";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+
+<div class="section" id="about-the-fsm-package">
+<h1>1&nbsp;&nbsp;&nbsp;About the FSM Package</h1>
+<p>The <a class="reference external" href="http://pear.php.net/package/FSM">FSM Package</a> implements a <a class="reference external" href="http://wikipedia.org/wiki/Finite_state_machine">Finite State Machine</a>.  In addition to
+maintaining state, this FSM also manages a user-defined payload, therefore
+effectively making the machine a <a class="reference external" href="http://wikipedia.org/wiki/Push-down_automata">Pushdown Automaton</a> (a finite state machine
+with memory).</p>
+<p>This code is based largely on Noah Spurrier's excellent <a class="reference external" href="http://www.noah.org/python/FSM/">FSM Python class</a>.</p>
+</div>
+<div class="section" id="building-a-finite-state-machine">
+<h1>2&nbsp;&nbsp;&nbsp;Building a Finite State Machine</h1>
+<p>The first step in building a Finite State Machine involves listing the finite
+set of states.  Then, all of the permissible transitions between these states
+must be defined.  A symbol and an optional callback function are associated
+with each transition.  The input processing routine will attempt to match its
+current symbol against the list of registered transitions.  If a transition
+from the current state using that symbol is found, the machine will move to
+the new state specified by the transition and, if one has been specified, the
+associated callback function will be invoked.</p>
+<div class="section" id="creating-a-new-fsm-object">
+<h2>2.1&nbsp;&nbsp;&nbsp;Creating a New FSM Object</h2>
+<p>Start by including the FSM package in your script:</p>
+<pre class="literal-block">
+require 'FSM.php';
+</pre>
+<p>When constructing a new FSM object, you must specify the machine's initial
+state and provide a payload variable.  The payload will be passed to all of
+the callback functions, supplying them with state information without
+(ab)using global variables.</p>
+<p>In this example, we pass an array representing a stack as the payload.  The
+machine's initial state is set to <tt class="docutils literal"><span class="pre">START</span></tt>.</p>
+<pre class="literal-block">
+$stack = array();
+$fsm = new FSM('START', $stack);
+</pre>
+</div>
+<div class="section" id="defining-transitions">
+<h2>2.2&nbsp;&nbsp;&nbsp;Defining Transitions</h2>
+<p>We'll need to define some transitions in order to make our machine useful.
+Let's assume our machine has two additional states: <tt class="docutils literal"><span class="pre">MIDDLE</span></tt> and <tt class="docutils literal"><span class="pre">END</span></tt>.
+Here's how we would define transitions to move us from <tt class="docutils literal"><span class="pre">START</span></tt> to <tt class="docutils literal"><span class="pre">MIDDLE</span></tt>
+and from <tt class="docutils literal"><span class="pre">MIDDLE</span></tt> to <tt class="docutils literal"><span class="pre">END</span></tt>:</p>
+<pre class="literal-block">
+function FirstCallback($symbol, $payload)
+{
+    echo &quot;First Transition\n&quot;;
+}
+
+function SecondCallback($symbol, $payload)
+{
+    echo &quot;Second Transition\n&quot;;
+}
+
+$fsm-&gt;addTransition('FIRST', 'START', 'MIDDLE', 'FirstCallback');
+$fsm-&gt;addTransition('SECOND', 'MIDDLE', 'END', 'SecondCallback');
+</pre>
+<p>Our machine is now aware of three states (<tt class="docutils literal"><span class="pre">START</span></tt>, <tt class="docutils literal"><span class="pre">MIDDLE</span></tt>, and <tt class="docutils literal"><span class="pre">END</span></tt>)
+and two symbols (<tt class="docutils literal"><span class="pre">FIRST</span></tt> and <tt class="docutils literal"><span class="pre">SECOND</span></tt>).  Two transitions (<tt class="docutils literal"><span class="pre">START</span></tt> to
+<tt class="docutils literal"><span class="pre">MIDDLE</span></tt> and <tt class="docutils literal"><span class="pre">MIDDLE</span></tt> to <tt class="docutils literal"><span class="pre">END</span></tt>) have been defined and associated with
+callbacks.  The following code will process the symbols <tt class="docutils literal"><span class="pre">FIRST</span></tt> and
+<tt class="docutils literal"><span class="pre">SECOND</span></tt> and move us from our initial state (<tt class="docutils literal"><span class="pre">START</span></tt>) through the
+<tt class="docutils literal"><span class="pre">MIDDLE</span></tt> state to the <tt class="docutils literal"><span class="pre">END</span></tt> state.</p>
+<pre class="literal-block">
+$fsm-&gt;process('FIRST');
+$fsm-&gt;process('SECOND');
+</pre>
+<p>The processing routine will invoke our two callbacks along the way, as well,
+resulting in the following being printed:</p>
+<pre class="literal-block">
+First Transition
+Second Transition
+</pre>
+</div>
+<div class="section" id="setting-default-transitions">
+<h2>2.3&nbsp;&nbsp;&nbsp;Setting Default Transitions</h2>
+<p>Now we'll set up a default transition.  This transition will be used whenever
+the processing routine cannot find a better match for the current state and
+symbol.  For our example, we'll consider this an error and print a warning for
+the user.</p>
+<pre class="literal-block">
+function ErrorCallback($symbol, $payload)
+{
+    echo &quot;This symbol does not compute: $symbol\n&quot;;
+}
+
+$fsm-&gt;setDefaultTransition('START', 'ErrorCallback');
+</pre>
+<p>Now let's process our symbols in an unexcepted order:</p>
+<pre class="literal-block">
+$fsm-&gt;process('SECOND');
+$fsm-&gt;process('FIRST');
+</pre>
+<p>Because the <tt class="docutils literal"><span class="pre">SECOND</span></tt> transition doesn't specify <tt class="docutils literal"><span class="pre">START</span></tt> as its initial
+state, the default transition will be used and the error callback will be
+invoked.  The <tt class="docutils literal"><span class="pre">FIRST</span></tt> transition will work as expected, however, because the
+machine will still be in the <tt class="docutils literal"><span class="pre">START</span></tt> state.</p>
+</div>
+</div>
+<div class="section" id="plotting-a-state-machine">
+<h1>3&nbsp;&nbsp;&nbsp;Plotting a State Machine</h1>
+<p>The FSM package optionally supports the ability to plot a machine's states
+with the help of the <a class="reference external" href="http://pear.php.net/package/Image_GraphViz">Image_GraphViz</a> package.  Doing so is as simple as
+creating a new <tt class="docutils literal"><span class="pre">FSM_GraphViz</span></tt> object using an existing state machine
+instance and then exporting the graph.</p>
+<pre class="literal-block">
+require_once 'FSM/GraphViz.php';
+$converter = new FSM_GraphViz($fsm);
+$graph = $converter-&gt;export();
+</pre>
+<p>The resulting graph object is an <tt class="docutils literal"><span class="pre">Image_GraphViz</span></tt> instance.  To export the
+graph as an image, use the <tt class="docutils literal"><span class="pre">image()</span></tt> method:</p>
+<pre class="literal-block">
+$graph-&gt;image('png');
+</pre>
+<p>This will produce an image similar to the following:</p>
+<div class="figure">
+<img alt="Example State Machine Plot" src="graphviz.png" />
+</div>
+<p>Consult the <a class="reference external" href="http://pear.php.net/package/Image_GraphViz/docs">Image_GraphViz documentation</a> for additional usage information.</p>
+</div>
+<div class="section" id="development-and-support">
+<h1>4&nbsp;&nbsp;&nbsp;Development and Support</h1>
+<div class="section" id="reporting-problems-and-suggestions">
+<h2>4.1&nbsp;&nbsp;&nbsp;Reporting Problems and Suggestions</h2>
+<p>If you run into a problem or would like to make a suggestion, please use the
+<a class="reference external" href="http://pear.php.net/bugs/">PEAR Bug Tracker</a>.  Feel free to contact me directly for other issues, but
+please try to use the bug tracker whenever possible so that others in the
+community will benefit from your feedback and my responses.</p>
+<ul class="simple">
+<li><a class="reference external" href="http://pear.php.net/package/FSM/bugs">Open Bugs</a></li>
+<li><a class="reference external" href="http://pear.php.net/bugs/report.php?package=FSM">Report a New Bug</a></li>
+</ul>
+</div>
+<div class="section" id="coming-soon">
+<h2>4.2&nbsp;&nbsp;&nbsp;Coming Soon</h2>
+<p>This section contains a list of &quot;todo&quot; items that will hopefully be addressed
+in future releases.</p>
+<ul class="simple">
+<li><em>No items at this time.</em></li>
+</ul>
+<p>If you have feature suggestions, please submit them using the <a class="reference external" href="http://pear.php.net/bugs/">PEAR Bug
+Tracker</a>.</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr class="footer" />
+<a class="reference external" href="guide.txt">View document source</a>.
+Generated on: 2008-02-10 22:49 UTC.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-6933602-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>

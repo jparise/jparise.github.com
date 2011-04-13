@@ -1,0 +1,50 @@
+============================
+ The SASL Extension for PHP
+============================
+
+--------------------
+ User Documentation
+--------------------
+
+:Author:        Jon Parise
+:Contact:       jon@php.net
+:Date:          $Date: 2004/08/11 00:20:02 $
+:Revision:      $Revision: 1.1 $
+
+.. contents:: Contents
+.. section-numbering::
+
+Frequently Asked Questions
+--------------------------
+
+How does the SASL extension relate to the Auth_SASL PEAR package?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The `Auth_SASL`_ PEAR package provides native PHP implementations of many of
+the SASL authentication mechanisms.  In theory, those methods could call out
+to the SASL extension to compute those strings using the native C library, but
+I'm not sure the effort is worth it.  I wouldn't object to the idea if someone
+did the work, though.
+
+.. _Auth_SASL: http://pear.php.net/Auth_SASL
+
+Does saslauthd need to be running locally?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``saslauthd`` needs to be running on the same machine as the SASL client (the
+PHP process, in your case).  The libsasl library (that the SASL extension
+wraps) will communicate with the ``saslauthd`` process via a local Unix domain
+socket.
+
+Can saslauthd be used to authenticate against a remote server?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``saslauthd`` process loads the SASL authentication modules and performs
+the actual authentication.  This may involve contacting a foreign machine
+(such as a remote Kerberos or LDAP server).                     
+
+To complicate things even further, ``saslauthd`` can use `PAM`_ as its
+authentication backend, which opens up even more authentication possibilities
+(many of which may involve other hosts).
+
+.. _PAM: http://www.freebsd.org/doc/en_US.ISO8859-1/articles/pam/
+
+.. vim: tabstop=4 shiftwidth=4 softtabstop=4 expandtab textwidth=78 ft=rst:

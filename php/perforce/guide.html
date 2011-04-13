@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<title>Perforce Extension for PHP</title>
+<meta name="author" content="Jon Parise" />
+<link rel="stylesheet" href="/css/php.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="perforce-extension-for-php">
+<h1 class="title">Perforce Extension for PHP</h1>
+<h2 class="subtitle" id="user-documentation">User Documentation</h2>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>Jon Parise</td></tr>
+<tr><th class="docinfo-name">Contact:</th>
+<td><a class="first last reference external" href="mailto:jon&#37;&#52;&#48;php&#46;net">jon<span>&#64;</span>php<span>&#46;</span>net</a></td></tr>
+<tr class="field"><th class="docinfo-name">Data:</th><td class="field-body">2008/03/13</td>
+</tr>
+<tr><th class="docinfo-name">Revision:</th>
+<td>#13</td></tr>
+</tbody>
+</table>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="auto-toc simple">
+<li><a class="reference internal" href="#overview" id="id2">1&nbsp;&nbsp;&nbsp;Overview</a><ul class="auto-toc">
+<li><a class="reference internal" href="#requirements" id="id3">1.1&nbsp;&nbsp;&nbsp;Requirements</a></li>
+<li><a class="reference internal" href="#installation" id="id4">1.2&nbsp;&nbsp;&nbsp;Installation</a></li>
+<li><a class="reference internal" href="#source-code" id="id5">1.3&nbsp;&nbsp;&nbsp;Source Code</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#usage" id="id6">2&nbsp;&nbsp;&nbsp;Usage</a></li>
+<li><a class="reference internal" href="#class-reference" id="id7">3&nbsp;&nbsp;&nbsp;Class Reference</a><ul class="auto-toc">
+<li><a class="reference internal" href="#the-perforceclient-class" id="id8">3.1&nbsp;&nbsp;&nbsp;The <tt class="docutils literal"><span class="pre">PerforceClient</span></tt> Class</a></li>
+<li><a class="reference internal" href="#the-perforceclientuser-interface" id="id9">3.2&nbsp;&nbsp;&nbsp;The <tt class="docutils literal"><span class="pre">PerforceClientUser</span></tt> Interface</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#development-and-support" id="id10">4&nbsp;&nbsp;&nbsp;Development and Support</a><ul class="auto-toc">
+<li><a class="reference internal" href="#reporting-problems-and-suggestions" id="id11">4.1&nbsp;&nbsp;&nbsp;Reporting Problems and Suggestions</a></li>
+<li><a class="reference internal" href="#coming-soon" id="id12">4.2&nbsp;&nbsp;&nbsp;Coming Soon</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="overview">
+<h1>1&nbsp;&nbsp;&nbsp;Overview</h1>
+<p><a class="reference external" href="http://www.perforce.com/">Perforce</a> is a fast, professional <a class="reference external" href="http://en.wikipedia.org/wiki/Software_configuration_management">Software Configuration Management</a>
+system.  The Perforce Extension for PHP wraps the public Perforce C/++ API,
+giving PHP developers direct access to Perforce's native client functions.</p>
+<div class="section" id="requirements">
+<h2>1.1&nbsp;&nbsp;&nbsp;Requirements</h2>
+<p>The Perforce extension has the following system requirements:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://www.php.net/">PHP</a> version 5.2.0 or later</li>
+<li><a class="reference external" href="http://pear.php.net/">PEAR</a> installer version 1.4.3 or later</li>
+<li><a class="reference external" href="http://www.perforce.com/perforce/loadsupp.html">Perforce C/C++ API</a> version 2006.2 or later</li>
+<li>A C++ compiler and tool chain, if building from source code</li>
+</ul>
+</div>
+<div class="section" id="installation">
+<h2>1.2&nbsp;&nbsp;&nbsp;Installation</h2>
+<p>The easiest way to install the Perforce extension is by using the PECL
+installer:</p>
+<pre class="literal-block">
+pecl install perforce
+</pre>
+<p>If you're building from source code, should use the <tt class="docutils literal"><span class="pre">--with-perforce</span></tt>
+configuration option.  If your copy of the <a class="reference external" href="http://www.perforce.com/perforce/loadsupp.html">Perforce C/C++ API</a> hasn't been
+installed in one of the default locations, you can specify it as a parameter:</p>
+<pre class="literal-block">
+--with-perforce=/opt/p4api
+</pre>
+<p>More detailed information on installing PECL packages in general can be found
+in the <a class="reference external" href="http://www.php.net/manual/install.pecl.php">Installation of PECL Extensions</a> section of the <a class="reference external" href="http://www.php.net/manual/">PHP Manual</a>.</p>
+</div>
+<div class="section" id="source-code">
+<h2>1.3&nbsp;&nbsp;&nbsp;Source Code</h2>
+<p>This package's source code is hosted in a guest branch of the <a class="reference external" href="http://public.perforce.com/public/index.html">Perforce Public
+Depot</a>.</p>
+<ul class="simple">
+<li><a class="reference external" href="http://public.perforce.com:8080/&#64;md=d&amp;cd=//guest/jon_parise/api/&amp;ra=s&amp;c=Gsw&#64;//guest/jon_parise/api/php/?ac=83">//guest/jon_parise/api/php/...</a></li>
+</ul>
+<p>A number of unit tests are included to help maintain correct and expected
+behavior.  The tests can be run using PECL tool's <tt class="docutils literal"><span class="pre">run-tests</span></tt> command:</p>
+<pre class="literal-block">
+pecl run-tests -p perforce
+</pre>
+<p>Additional unit test contributions are welcome, especially when they increase
+code coverage or exercise specific use cases.</p>
+</div>
+</div>
+<div class="section" id="usage">
+<h1>2&nbsp;&nbsp;&nbsp;Usage</h1>
+<p>The Perforce extension provides the <tt class="docutils literal"><span class="pre">PerforceClient</span></tt> class and the
+<tt class="docutils literal"><span class="pre">PerforceClientUser</span></tt> interface.</p>
+<p>All requests to the Perforce server are made through the <tt class="docutils literal"><span class="pre">PerforceClient</span></tt>
+object, and all responses from the Perforce server are received via methods of
+the <tt class="docutils literal"><span class="pre">PerforceClientUser</span></tt> interface.</p>
+<p>Users must provide their own class which implements the <tt class="docutils literal"><span class="pre">PerforceClientUser</span></tt>
+interface and then pass an instance of that class to the <tt class="docutils literal"><span class="pre">PerforceClient</span></tt>
+class's constructor.</p>
+<pre class="literal-block">
+class MyClientUser implements PerforceClientUser
+{
+    ...
+}
+
+$ui = new MyClientUser();
+$p4 = new PerforceClient($ui);
+</pre>
+<p>Before the <tt class="docutils literal"><span class="pre">PerforceClient</span></tt> instance can be used, it must be initialized.
+This will open the connection to the Perforce server.  Any desired non-default
+connection parameters (such as the clientspec name or the server's port) must
+be specified before attempting to initialize the connection.</p>
+<pre class="literal-block">
+$p4-&gt;setClient('ClientspecName');
+$p4-&gt;setPort('public.perforce.com:1666');
+
+if ($p4-&gt;init() === false) {
+    die('Failed to initialize Perforce server connection');
+}
+</pre>
+<p>Once the connection has been initialized, commands can be issued to the server
+using the <a class="reference internal" href="#bool-setargs-string-arg1-string">setArgs()</a> and <a class="reference internal" href="#bool-run-string-command">run()</a> methods.</p>
+<pre class="literal-block">
+$p4-&gt;setArgs('Jon_Parise');
+$p4-&gt;run('users');
+</pre>
+<p>The <a class="reference internal" href="#bool-run-string-command">run()</a> method will send the command to the server immediately and then
+wait for the response.  When the response is received, the appropriate method
+(or methods) on the user's <tt class="docutils literal"><span class="pre">PerforceClientUser</span></tt> class will called.</p>
+<p>At the end of the session, the connection should be closed.</p>
+<pre class="literal-block">
+$p4-&gt;final();
+</pre>
+<p>More detailed information on the various client methods is provided in this
+document's <a class="reference internal" href="#class-reference">Class Reference</a> section.</p>
+</div>
+<div class="section" id="class-reference">
+<h1>3&nbsp;&nbsp;&nbsp;Class Reference</h1>
+<div class="section" id="the-perforceclient-class">
+<h2>3.1&nbsp;&nbsp;&nbsp;The <tt class="docutils literal"><span class="pre">PerforceClient</span></tt> Class</h2>
+<div class="section" id="perforceclient-object-ui">
+<h3>3.1.1&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">PerforceClient(object</span> <span class="pre">$ui)</span></tt></h3>
+<p>Creates a new <tt class="docutils literal"><span class="pre">PerforceClient</span></tt> instance which uses the provided object for
+all user input and output.</p>
+</div>
+<div class="section" id="bool-dropped">
+<h3>3.1.2&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">bool</span> <span class="pre">dropped()</span></tt></h3>
+<p>Checks if the connection is no longer usable.  This is useful if you want to
+reuse a client connection for multiple commands and need to make sure that the
+connection is still alive.</p>
+<p>If a dropped connection is detected, the actual error message won't be
+available until <a class="reference internal" href="#int-final">final()</a> is called to completely close the connection.</p>
+</div>
+<div class="section" id="int-final">
+<h3>3.1.3&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">int</span> <span class="pre">final()</span></tt></h3>
+<p>Closes the current connection and returns the final number of errors that
+occurred during the connection's lifetime.</p>
+</div>
+<div class="section" id="string-getcharset">
+<h3>3.1.4&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">string</span> <span class="pre">getCharset()</span></tt></h3>
+<p>Gets the current character set.</p>
+</div>
+<div class="section" id="string-getclient">
+<h3>3.1.5&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">string</span> <span class="pre">getClient()</span></tt></h3>
+<p>Gets the current client setting.</p>
+</div>
+<div class="section" id="string-getcwd">
+<h3>3.1.6&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">string</span> <span class="pre">getCwd()</span></tt></h3>
+<p>Gets the current working directory as set by <a class="reference internal" href="#bool-setcwd-string-cwd">setCwd()</a>.</p>
+</div>
+<div class="section" id="string-gethost">
+<h3>3.1.7&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">string</span> <span class="pre">getHost()</span></tt></h3>
+<p>Gets the client hostname.  If a prior call to <a class="reference internal" href="#bool-sethost-string-host">setHost()</a> has not been made,
+calling this function may result in reverse DNS lookup.</p>
+</div>
+<div class="section" id="string-getlanguage">
+<h3>3.1.8&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">string</span> <span class="pre">getLanguage()</span></tt></h3>
+<p>Gets the current language.</p>
+</div>
+<div class="section" id="string-getos">
+<h3>3.1.9&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">string</span> <span class="pre">getOs()</span></tt></h3>
+<p>Gets the name of the client operating system.  Value operating system names
+are <tt class="docutils literal"><span class="pre">UNIX</span></tt>, <tt class="docutils literal"><span class="pre">vms</span></tt>, <tt class="docutils literal"><span class="pre">NT</span></tt>, <tt class="docutils literal"><span class="pre">Mac</span></tt>, and <tt class="docutils literal"><span class="pre">null</span></tt>.</p>
+</div>
+<div class="section" id="string-getpassword">
+<h3>3.1.10&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">string</span> <span class="pre">getPassword()</span></tt></h3>
+<p>Gets the current password setting.</p>
+</div>
+<div class="section" id="string-getport">
+<h3>3.1.11&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">string</span> <span class="pre">getPort()</span></tt></h3>
+<p>Gets the current port setting for this connection.</p>
+</div>
+<div class="section" id="string-getuser">
+<h3>3.1.12&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">string</span> <span class="pre">getUser()</span></tt></h3>
+<p>Gets the current user setting.</p>
+</div>
+<div class="section" id="bool-setport-string-port">
+<h3>3.1.13&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">bool</span> <span class="pre">setPort(string</span> <span class="pre">$port)</span></tt></h3>
+<p>Sets the port to be used for this connection.  This must be called prior to
+creating the connection via <a class="reference internal" href="#bool-init">init()</a>.</p>
+</div>
+<div class="section" id="string-getprotocol-string-protocol">
+<h3>3.1.14&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">string</span> <span class="pre">getProtocol(string</span> <span class="pre">$protocol)</span></tt></h3>
+<p>Gets the current value of a specific protocol being used by this connection.
+This should only be called after a call to <a class="reference internal" href="#bool-run-string-command">run()</a>; otherwise, incomplete
+information will be returned.</p>
+<p>The list of supported protocols is detailed in the documentation for
+<a class="reference internal" href="#bool-setprotocol-string-protocol-string-value">setProtocol()</a>.</p>
+<p>This function will only report protocol variables set by the server, not those
+variables set by the client via calls to <a class="reference internal" href="#bool-setprotocol-string-protocol-string-value">setProtocol()</a>.</p>
+</div>
+<div class="section" id="bool-init">
+<h3>3.1.15&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">bool</span> <span class="pre">init()</span></tt></h3>
+<p>Establishes a connection to the server specified by <a class="reference internal" href="#bool-setport-string-port">setPort()</a> in preparation
+for running commands via <a class="reference internal" href="#bool-run-string-command">run()</a>.</p>
+</div>
+<div class="section" id="bool-run-string-command">
+<h3>3.1.16&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">bool</span> <span class="pre">run(string</span> <span class="pre">$command)</span></tt></h3>
+<p>Runs a Perforce command and returns when it completes.  Command arguments must
+be set separately by calling <a class="reference internal" href="#bool-setargs-string-arg1-string">setArgs()</a>.  This must be called prior to
+creating the connection via <a class="reference internal" href="#bool-init">init()</a>.</p>
+</div>
+<div class="section" id="bool-setuser-string-user">
+<h3>3.1.17&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">bool</span> <span class="pre">setUser(string</span> <span class="pre">$user)</span></tt></h3>
+<p>Sets the user to be used for subsequent commands executed via <a class="reference internal" href="#bool-run-string-command">run()</a>.</p>
+</div>
+<div class="section" id="bool-setpassword-string-password">
+<h3>3.1.18&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">bool</span> <span class="pre">setPassword(string</span> <span class="pre">$password)</span></tt></h3>
+<p>Sets the password to be used for subsequent commands executed via <a class="reference internal" href="#bool-run-string-command">run()</a>.</p>
+</div>
+<div class="section" id="bool-setclient-string-client">
+<h3>3.1.19&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">bool</span> <span class="pre">setClient(string</span> <span class="pre">$client)</span></tt></h3>
+<p>Sets the client to be used for subsequent commands executed via <a class="reference internal" href="#bool-run-string-command">run()</a>.</p>
+</div>
+<div class="section" id="string-getconfig">
+<h3>3.1.20&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">string</span> <span class="pre">getConfig()</span></tt></h3>
+<p>Gets the name of the current configuration file.  If none has been set, the
+string <tt class="docutils literal"><span class="pre">noconfig</span></tt> will be returned.</p>
+</div>
+<div class="section" id="bool-setargs-string-arg1-string">
+<h3>3.1.21&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">bool</span> <span class="pre">setArgs(string</span> <span class="pre">$arg1[,</span> <span class="pre">string</span> <span class="pre">...])</span></tt></h3>
+<p>Sets a list of arguments that will be passed to a Perforce command executed
+using <a class="reference internal" href="#bool-run-string-command">run()</a>.  This function must be called for each call to <a class="reference internal" href="#bool-run-string-command">run()</a>.</p>
+<p>This function accepts either multiple individual arguments or an array of
+arguments.</p>
+</div>
+<div class="section" id="bool-setcharset-string-charset">
+<h3>3.1.22&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">bool</span> <span class="pre">setCharset(string</span> <span class="pre">$charset)</span></tt></h3>
+<p>Sets the character set to be used for subsequent commands executed via
+<a class="reference internal" href="#bool-run-string-command">run()</a>.</p>
+</div>
+<div class="section" id="bool-setcwd-string-cwd">
+<h3>3.1.23&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">bool</span> <span class="pre">setCwd(string</span> <span class="pre">$cwd)</span></tt></h3>
+<p>Sets the working directory to be used for subsequent commands executed via
+<a class="reference internal" href="#bool-run-string-command">run()</a>.</p>
+</div>
+<div class="section" id="bool-sethost-string-host">
+<h3>3.1.24&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">bool</span> <span class="pre">setHost(string</span> <span class="pre">$host)</span></tt></h3>
+<p>Sets the hostname to be used for subsequent commands executed via <a class="reference internal" href="#bool-run-string-command">run()</a>.</p>
+</div>
+<div class="section" id="bool-setlanguage-string-language">
+<h3>3.1.25&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">bool</span> <span class="pre">setLanguage(string</span> <span class="pre">$language)</span></tt></h3>
+<p>Sets the language to be used for subsequent commands executed via <a class="reference internal" href="#bool-run-string-command">run()</a>.</p>
+</div>
+<div class="section" id="bool-setprog-string-name">
+<h3>3.1.26&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">bool</span> <span class="pre">setProg(string</span> <span class="pre">$name)</span></tt></h3>
+<p>Sets the application or string name for this connection.  The program's
+identity will be reported by the <tt class="docutils literal"><span class="pre">p4</span> <span class="pre">monitor</span></tt> command and recorded in the
+server's log.  This function should be called after <a class="reference internal" href="#bool-init">init()</a> and prior to
+calling <a class="reference internal" href="#bool-run-string-command">run()</a>.</p>
+</div>
+<div class="section" id="bool-setprotocol-string-protocol-string-value">
+<h3>3.1.27&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">bool</span> <span class="pre">setProtocol(string</span> <span class="pre">$protocol,</span> <span class="pre">string</span> <span class="pre">$value)</span></tt></h3>
+<p>Sets special protocols for the server to use for this connection.  This must
+be called prior to creating the connection via <a class="reference internal" href="#bool-init">init()</a>.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="79%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Protocol</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><tt class="docutils literal"><span class="pre">tag</span></tt></td>
+<td>Enables tagged output if set to any value.</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">specstring</span></tt></td>
+<td>Enables specially formatted forms if set to any value.</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">api</span></tt></td>
+<td>Specifies a specific server API value for this connection.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="bool-setticketfile-string-filename">
+<h3>3.1.28&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">bool</span> <span class="pre">setTicketFile(string</span> <span class="pre">$filename)</span></tt></h3>
+<p>Sets the absolute filename of the ticket file to be used for subsequent
+commands executed via <a class="reference internal" href="#bool-run-string-command">run()</a>.</p>
+</div>
+</div>
+<div class="section" id="the-perforceclientuser-interface">
+<h2>3.2&nbsp;&nbsp;&nbsp;The <tt class="docutils literal"><span class="pre">PerforceClientUser</span></tt> Interface</h2>
+<div class="section" id="void-diff-string-file1-string-file2-boolean-dopage-int-flags">
+<h3>3.2.1&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">void</span> <span class="pre">Diff(string</span> <span class="pre">$file1,</span> <span class="pre">string</span> <span class="pre">$file2,</span> <span class="pre">boolean</span> <span class="pre">$doPage,</span> <span class="pre">int</span> <span class="pre">$flags)</span></tt></h3>
+<p>Handle a two-way diff request.</p>
+<pre class="literal-block">
+function Diff($file1, $file2, $doPage, $flags)
+{
+    if (!empty($_ENV['P4DIFF'])) {
+        $diff = $_ENV['P4DIFF'];
+    } else if (!empty($_ENV['DIFF'])) {
+        $diff = $_ENV['DIFF'];
+    } else {
+        $this-&gt;OutputError(
+            'No diff program specified with $P4DIFF or $DIFF.');
+    }
+
+    $pager = false;
+    if ($doPage) {
+        if (!empty($_ENV['P4PAGER'])) {
+            $pager = $_ENV['P4PAGER'];
+        } else if (!empty($_ENV['PAGER'])) {
+            $pager = $_ENV['PAGER'];
+        } else {
+            $pager = false;
+        }
+    }
+
+    if ($pager) {
+        system(&quot;$diff $flags $file1 $file2 | $pager&quot;);
+    } else {
+        system(&quot;$diff $flags $file1 $file2&quot;);
+    }
+}
+</pre>
+</div>
+<div class="section" id="void-edit-string-file">
+<h3>3.2.2&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">void</span> <span class="pre">Edit(string</span> <span class="pre">$file)</span></tt></h3>
+<p>Handle a file edit request.</p>
+<pre class="literal-block">
+function Edit($file)
+{
+    if (!empty($_ENV['P4EDITOR'])) {
+        $editor = $_ENV['P4EDITOR'];
+    } else if (!empty($_ENV['EDITOR'])) {
+        $editor = $_ENV['EDITOR'];
+    } else {
+        $editor = 'vi';
+    }
+
+    system(&quot;$editor $file&quot;);
+}
+</pre>
+</div>
+<div class="section" id="void-errorpause-string-message">
+<h3>3.2.3&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">void</span> <span class="pre">ErrorPause(string</span> <span class="pre">$message)</span></tt></h3>
+<p>Display an error message and wait for user to respond.</p>
+<pre class="literal-block">
+function ErrorPause($message)
+{
+    $this-&gt;OutputError($message);
+    fgetc(STDIN);
+}
+</pre>
+</div>
+<div class="section" id="void-handleerror-string-message-int-severity">
+<h3>3.2.4&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">void</span> <span class="pre">HandleError(string</span> <span class="pre">$message,</span> <span class="pre">int</span> <span class="pre">$severity)</span></tt></h3>
+<p>Handle an error after a failed command.</p>
+<pre class="literal-block">
+function HandleError($message, $severity)
+{
+    fwrite(STDERR, &quot;[$severity] $message\n&quot;);
+}
+</pre>
+</div>
+<div class="section" id="void-help-string-message">
+<h3>3.2.5&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">void</span> <span class="pre">Help(string</span> <span class="pre">$message)</span></tt></h3>
+<p>Output help text.</p>
+<pre class="literal-block">
+function Help($help)
+{
+    $this-&gt;Message(implode(&quot;\n&quot;, $help));
+}
+</pre>
+</div>
+<div class="section" id="string-inputdata">
+<h3>3.2.6&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">string</span> <span class="pre">InputData()</span></tt></h3>
+<p>Gather input from the user and return it to the current command.</p>
+<pre class="literal-block">
+function InputData()
+{
+    return fgets(STDIN);
+}
+</pre>
+</div>
+<div class="section" id="void-merge-string-base-string-leg1-string-leg2-string-result">
+<h3>3.2.7&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">void</span> <span class="pre">Merge(string</span> <span class="pre">$base,</span> <span class="pre">string</span> <span class="pre">$leg1,</span> <span class="pre">string</span> <span class="pre">$leg2,</span> <span class="pre">string</span> <span class="pre">$result)</span></tt></h3>
+<p>Handle a merge request.</p>
+<pre class="literal-block">
+function Merge($base, $leg1, $leg2, $result)
+{
+    if (!empty($_ENV['P4MERGE'])) {
+        $merge = $_ENV['P4MERGE'];
+    } else if (!empty($_ENV['MERGE'])) {
+        $merge = $_ENV['MERGE'];
+    } else {
+        $this-&gt;OutputError(
+            'No merge program specified with $P4MERGE or $MERGE.');
+    }
+
+    system(&quot;$merge $base $leg1 $leg2 $result&quot;);
+}
+</pre>
+</div>
+<div class="section" id="void-message-string-message-int-severity">
+<h3>3.2.8&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">void</span> <span class="pre">Message(string</span> <span class="pre">$message,</span> <span class="pre">int</span> <span class="pre">$severity)</span></tt></h3>
+<p>Output information or errors from the current command.</p>
+<pre class="literal-block">
+function Message($message, $severity)
+{
+    $this-&gt;OutputInfo(0, $message);
+}
+</pre>
+</div>
+<div class="section" id="void-outputbinary-string-data">
+<h3>3.2.9&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">void</span> <span class="pre">OutputBinary(string</span> <span class="pre">$data)</span></tt></h3>
+<p>Output binary data.</p>
+<pre class="literal-block">
+function OutputBinary($data)
+{
+    fwrite(STDOUT, $data);
+}
+</pre>
+</div>
+<div class="section" id="void-outputerror-string-message">
+<h3>3.2.10&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">void</span> <span class="pre">OutputError(string</span> <span class="pre">$message)</span></tt></h3>
+<p>Display an error message.</p>
+<pre class="literal-block">
+function OutputError($message)
+{
+    fwrite(STDERR, &quot;$message\n&quot;);
+}
+</pre>
+</div>
+<div class="section" id="void-outputinfo-int-level-string-data">
+<h3>3.2.11&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">void</span> <span class="pre">OutputInfo(int</span> <span class="pre">$level,</span> <span class="pre">string</span> <span class="pre">$data)</span></tt></h3>
+<p>Output tabular data.</p>
+<pre class="literal-block">
+function OutputInfo($level, $data)
+{
+    fwrite(STDOUT, $data);
+}
+</pre>
+</div>
+<div class="section" id="void-outputstat-array-tags">
+<h3>3.2.12&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">void</span> <span class="pre">OutputStat(array</span> <span class="pre">$tags)</span></tt></h3>
+<p>Output an array of file status tags.</p>
+<pre class="literal-block">
+function OutputStat($tags)
+{
+    foreach ($tags as $key =&gt; $value) {
+        if ($key !== 'func') {
+            $this-&gt;OutputText('... ' . $key . ' ' . $value . &quot;\n&quot;);
+        }
+    }
+}
+</pre>
+</div>
+<div class="section" id="void-outputtext-string-data">
+<h3>3.2.13&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">void</span> <span class="pre">OutputText(string</span> <span class="pre">$data)</span></tt></h3>
+<p>Output textual data.</p>
+<pre class="literal-block">
+function OutputText($data)
+{
+    fwrite(STDOUT, $data);
+}
+</pre>
+</div>
+<div class="section" id="string-prompt-string-message">
+<h3>3.2.14&nbsp;&nbsp;&nbsp;<tt class="docutils literal"><span class="pre">string</span> <span class="pre">Prompt(string</span> <span class="pre">$message)</span></tt></h3>
+<p>Prompt the user for input and return it to the current command.</p>
+<pre class="literal-block">
+function Prompt($message)
+{
+    echo $message;
+
+    return fgets(STDIN);
+}
+</pre>
+</div>
+</div>
+</div>
+<div class="section" id="development-and-support">
+<h1>4&nbsp;&nbsp;&nbsp;Development and Support</h1>
+<div class="section" id="reporting-problems-and-suggestions">
+<h2>4.1&nbsp;&nbsp;&nbsp;Reporting Problems and Suggestions</h2>
+<p>If you run into a problem or would like to make a suggestion, please use the
+<a class="reference external" href="http://pecl.php.net/bugs/">PECL Bug Tracker</a>.  Feel free to contact me directly for other issues, but
+please try to use the bug tracker whenever possible so that others in the
+community will benefit from your feedback and my responses.</p>
+<ul class="simple">
+<li><a class="reference external" href="http://pecl.php.net/bugs/search.php?cmd=display&amp;status=Open&amp;package_name[]=perforce">Open Bugs</a></li>
+<li><a class="reference external" href="http://pecl.php.net/bugs/report.php?package=perforce">Report a New Bug</a></li>
+</ul>
+</div>
+<div class="section" id="coming-soon">
+<h2>4.2&nbsp;&nbsp;&nbsp;Coming Soon</h2>
+<p>This section contains a list of &quot;todo&quot; items that will hopefully be addressed
+in future releases.</p>
+<ul class="simple">
+<li><em>No items at this time.</em></li>
+</ul>
+<p>If you have feature suggestions, please submit them using the <a class="reference external" href="http://pecl.php.net/bugs/">PECL Bug
+Tracker</a>.</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr class="footer" />
+<a class="reference external" href="guide.txt">View document source</a>.
+Generated on: 2008-03-14 04:42 UTC.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-6933602-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>

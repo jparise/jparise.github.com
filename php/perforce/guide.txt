@@ -1,0 +1,542 @@
+===========================
+ Perforce Extension for PHP
+===========================
+
+--------------------
+ User Documentation
+--------------------
+
+:Author:    Jon Parise
+:Contact:   jon@php.net
+:Data:      $Date: 2008/03/13 $
+:Revision:  $Revision: #13 $
+
+.. contents:: Contents
+   :depth: 2
+
+.. section-numbering::
+
+Overview
+========
+
+`Perforce`_ is a fast, professional `Software Configuration Management`_
+system.  The Perforce Extension for PHP wraps the public Perforce C/++ API,
+giving PHP developers direct access to Perforce's native client functions.
+
+.. _Perforce: http://www.perforce.com/
+.. _Software Configuration Management: http://en.wikipedia.org/wiki/Software_configuration_management
+
+Requirements
+------------
+The Perforce extension has the following system requirements:
+
+- `PHP`_ version 5.2.0 or later
+- `PEAR`_ installer version 1.4.3 or later
+- `Perforce C/C++ API`_ version 2006.2 or later
+- A C++ compiler and tool chain, if building from source code
+
+.. _PHP: http://www.php.net/
+.. _PEAR: http://pear.php.net/
+.. _Perforce C/C++ API: http://www.perforce.com/perforce/loadsupp.html
+
+Installation
+------------
+The easiest way to install the Perforce extension is by using the PECL
+installer::
+
+    pecl install perforce
+
+If you're building from source code, should use the ``--with-perforce``
+configuration option.  If your copy of the `Perforce C/C++ API`_ hasn't been
+installed in one of the default locations, you can specify it as a parameter::
+
+    --with-perforce=/opt/p4api
+
+More detailed information on installing PECL packages in general can be found
+in the `Installation of PECL Extensions`_ section of the `PHP Manual`_.
+
+.. _Installation of PECL Extensions: http://www.php.net/manual/install.pecl.php
+.. _PHP Manual: http://www.php.net/manual/
+
+Source Code
+-----------
+This package's source code is hosted in a guest branch of the `Perforce Public
+Depot`_.
+
+- `//guest/jon_parise/api/php/...`__
+
+A number of unit tests are included to help maintain correct and expected
+behavior.  The tests can be run using PECL tool's ``run-tests`` command::
+
+    pecl run-tests -p perforce
+
+Additional unit test contributions are welcome, especially when they increase
+code coverage or exercise specific use cases.
+
+.. _Perforce Public Depot: http://public.perforce.com/public/index.html
+__ http://public.perforce.com:8080/@md=d&cd=//guest/jon_parise/api/&ra=s&c=Gsw@//guest/jon_parise/api/php/?ac=83
+
+Usage
+=====
+
+The Perforce extension provides the ``PerforceClient`` class and the
+``PerforceClientUser`` interface.
+
+All requests to the Perforce server are made through the ``PerforceClient``
+object, and all responses from the Perforce server are received via methods of
+the ``PerforceClientUser`` interface.
+
+Users must provide their own class which implements the ``PerforceClientUser``
+interface and then pass an instance of that class to the ``PerforceClient``
+class's constructor.
+
+::
+
+    class MyClientUser implements PerforceClientUser
+    {
+        ...
+    }
+
+    $ui = new MyClientUser();
+    $p4 = new PerforceClient($ui);
+
+Before the ``PerforceClient`` instance can be used, it must be initialized.
+This will open the connection to the Perforce server.  Any desired non-default
+connection parameters (such as the clientspec name or the server's port) must
+be specified before attempting to initialize the connection.
+
+::
+
+    $p4->setClient('ClientspecName');
+    $p4->setPort('public.perforce.com:1666');
+
+    if ($p4->init() === false) {
+        die('Failed to initialize Perforce server connection');
+    }
+
+Once the connection has been initialized, commands can be issued to the server
+using the `setArgs()`_ and `run()`_ methods.
+
+::
+
+    $p4->setArgs('Jon_Parise');
+    $p4->run('users');
+
+The `run()`_ method will send the command to the server immediately and then
+wait for the response.  When the response is received, the appropriate method
+(or methods) on the user's ``PerforceClientUser`` class will called.
+
+At the end of the session, the connection should be closed.
+
+::
+
+    $p4->final();
+
+More detailed information on the various client methods is provided in this
+document's `Class Reference`_ section.
+
+Class Reference
+===============
+
+The ``PerforceClient`` Class
+----------------------------
+
+``PerforceClient(object $ui)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Creates a new ``PerforceClient`` instance which uses the provided object for
+all user input and output.
+
+``bool dropped()``
+~~~~~~~~~~~~~~~~~~
+Checks if the connection is no longer usable.  This is useful if you want to
+reuse a client connection for multiple commands and need to make sure that the
+connection is still alive.
+
+If a dropped connection is detected, the actual error message won't be
+available until `final()`_ is called to completely close the connection.
+
+``int final()``
+~~~~~~~~~~~~~~~
+Closes the current connection and returns the final number of errors that
+occurred during the connection's lifetime.
+
+``string getCharset()``
+~~~~~~~~~~~~~~~~~~~~~~~
+Gets the current character set.
+
+``string getClient()``
+~~~~~~~~~~~~~~~~~~~~~~
+Gets the current client setting.
+
+``string getCwd()``
+~~~~~~~~~~~~~~~~~~~
+Gets the current working directory as set by `setCwd()`_.
+
+``string getHost()``
+~~~~~~~~~~~~~~~~~~~~
+Gets the client hostname.  If a prior call to `setHost()`_ has not been made,
+calling this function may result in reverse DNS lookup.
+
+``string getLanguage()``
+~~~~~~~~~~~~~~~~~~~~~~~~
+Gets the current language.
+
+``string getOs()``
+~~~~~~~~~~~~~~~~~~
+Gets the name of the client operating system.  Value operating system names
+are ``UNIX``, ``vms``, ``NT``, ``Mac``, and ``null``.
+
+``string getPassword()``
+~~~~~~~~~~~~~~~~~~~~~~~~
+Gets the current password setting.
+
+``string getPort()``
+~~~~~~~~~~~~~~~~~~~~
+Gets the current port setting for this connection.
+
+``string getUser()``
+~~~~~~~~~~~~~~~~~~~~
+Gets the current user setting.
+
+``bool setPort(string $port)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sets the port to be used for this connection.  This must be called prior to
+creating the connection via `init()`_.
+
+``string getProtocol(string $protocol)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Gets the current value of a specific protocol being used by this connection.
+This should only be called after a call to `run()`_; otherwise, incomplete
+information will be returned.
+
+The list of supported protocols is detailed in the documentation for
+`setProtocol()`_.
+
+This function will only report protocol variables set by the server, not those
+variables set by the client via calls to `setProtocol()`_. 
+
+``bool init()``
+~~~~~~~~~~~~~~~
+Establishes a connection to the server specified by `setPort()`_ in preparation
+for running commands via `run()`_.
+
+``bool run(string $command)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Runs a Perforce command and returns when it completes.  Command arguments must
+be set separately by calling `setArgs()`_.  This must be called prior to
+creating the connection via `init()`_.
+
+``bool setUser(string $user)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sets the user to be used for subsequent commands executed via `run()`_.
+
+``bool setPassword(string $password)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sets the password to be used for subsequent commands executed via `run()`_.
+
+``bool setClient(string $client)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sets the client to be used for subsequent commands executed via `run()`_.
+
+``string getConfig()``
+~~~~~~~~~~~~~~~~~~~~~~
+Gets the name of the current configuration file.  If none has been set, the
+string ``noconfig`` will be returned.
+
+``bool setArgs(string $arg1[, string ...])``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sets a list of arguments that will be passed to a Perforce command executed
+using `run()`_.  This function must be called for each call to `run()`_.
+
+This function accepts either multiple individual arguments or an array of
+arguments.
+
+``bool setCharset(string $charset)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sets the character set to be used for subsequent commands executed via
+`run()`_.
+
+``bool setCwd(string $cwd)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sets the working directory to be used for subsequent commands executed via
+`run()`_.
+
+``bool setHost(string $host)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sets the hostname to be used for subsequent commands executed via `run()`_.
+
+``bool setLanguage(string $language)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sets the language to be used for subsequent commands executed via `run()`_.
+
+``bool setProg(string $name)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sets the application or string name for this connection.  The program's
+identity will be reported by the ``p4 monitor`` command and recorded in the
+server's log.  This function should be called after `init()`_ and prior to
+calling `run()`_.
+
+``bool setProtocol(string $protocol, string $value)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sets special protocols for the server to use for this connection.  This must
+be called prior to creating the connection via `init()`_.
+
++----------------+------------------------------------------------------------+
+| Protocol       | Description                                                |
++================+============================================================+
+| ``tag``        | Enables tagged output if set to any value.                 |
++----------------+------------------------------------------------------------+
+| ``specstring`` | Enables specially formatted forms if set to any value.     |
++----------------+------------------------------------------------------------+
+| ``api``        | Specifies a specific server API value for this connection. |
++----------------+------------------------------------------------------------+
+
+``bool setTicketFile(string $filename)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sets the absolute filename of the ticket file to be used for subsequent
+commands executed via `run()`_.
+
+.. Method Name Abbreviations
+.. _setPort(): `bool setPort(string $port)`_
+.. _setProtocol(): `bool setProtocol(string $protocol, string $value)`_
+.. _setCwd(): `bool setCwd(string $cwd)`_
+.. _setHost(): `bool setHost(string $host)`_
+.. _init(): `bool init()`_
+.. _final(): `int final()`_
+.. _setArgs(): `bool setArgs(string $arg1[, string ...])`_
+.. _run(): `bool run(string $command)`_
+
+
+The ``PerforceClientUser`` Interface
+------------------------------------
+
+``void Diff(string $file1, string $file2, boolean $doPage, int $flags)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Handle a two-way diff request.
+
+::
+
+    function Diff($file1, $file2, $doPage, $flags)
+    {
+        if (!empty($_ENV['P4DIFF'])) {
+            $diff = $_ENV['P4DIFF'];
+        } else if (!empty($_ENV['DIFF'])) {
+            $diff = $_ENV['DIFF'];
+        } else {
+            $this->OutputError(
+                'No diff program specified with $P4DIFF or $DIFF.');
+        }
+
+        $pager = false;
+        if ($doPage) {
+            if (!empty($_ENV['P4PAGER'])) {
+                $pager = $_ENV['P4PAGER'];
+            } else if (!empty($_ENV['PAGER'])) {
+                $pager = $_ENV['PAGER'];
+            } else {
+                $pager = false;
+            }
+        }
+
+        if ($pager) {
+            system("$diff $flags $file1 $file2 | $pager");
+        } else {
+            system("$diff $flags $file1 $file2");
+        }
+    }
+
+``void Edit(string $file)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Handle a file edit request.
+
+::
+
+    function Edit($file)
+    {
+        if (!empty($_ENV['P4EDITOR'])) {
+            $editor = $_ENV['P4EDITOR'];
+        } else if (!empty($_ENV['EDITOR'])) {
+            $editor = $_ENV['EDITOR'];
+        } else {
+            $editor = 'vi';
+        }
+
+        system("$editor $file");
+    }
+
+``void ErrorPause(string $message)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Display an error message and wait for user to respond.
+
+::
+
+    function ErrorPause($message)
+    {
+        $this->OutputError($message);
+        fgetc(STDIN);
+    }
+
+``void HandleError(string $message, int $severity)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Handle an error after a failed command.
+
+::
+
+    function HandleError($message, $severity)
+    {
+        fwrite(STDERR, "[$severity] $message\n");
+    }
+
+``void Help(string $message)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Output help text.
+
+::
+
+    function Help($help)
+    {
+        $this->Message(implode("\n", $help));
+    }
+
+``string InputData()``
+~~~~~~~~~~~~~~~~~~~~~~
+Gather input from the user and return it to the current command.
+
+::
+
+    function InputData()
+    {
+        return fgets(STDIN);
+    }
+
+``void Merge(string $base, string $leg1, string $leg2, string $result)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Handle a merge request.
+
+::
+
+    function Merge($base, $leg1, $leg2, $result)
+    {
+        if (!empty($_ENV['P4MERGE'])) {
+            $merge = $_ENV['P4MERGE'];
+        } else if (!empty($_ENV['MERGE'])) {
+            $merge = $_ENV['MERGE'];
+        } else {
+            $this->OutputError(
+                'No merge program specified with $P4MERGE or $MERGE.');
+        }
+
+        system("$merge $base $leg1 $leg2 $result");
+    }
+
+``void Message(string $message, int $severity)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Output information or errors from the current command.
+
+::
+
+    function Message($message, $severity)
+    {
+        $this->OutputInfo(0, $message);
+    }
+
+``void OutputBinary(string $data)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Output binary data.
+
+::
+
+    function OutputBinary($data)
+    {
+        fwrite(STDOUT, $data);
+    }
+
+``void OutputError(string $message)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Display an error message.
+
+::
+
+    function OutputError($message)
+    {
+        fwrite(STDERR, "$message\n");
+    }
+
+``void OutputInfo(int $level, string $data)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Output tabular data.
+
+::
+
+    function OutputInfo($level, $data)
+    {
+        fwrite(STDOUT, $data);
+    }
+
+``void OutputStat(array $tags)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Output an array of file status tags.
+
+::
+
+    function OutputStat($tags)
+    {
+        foreach ($tags as $key => $value) {
+            if ($key !== 'func') {
+                $this->OutputText('... ' . $key . ' ' . $value . "\n");
+            }
+        }
+    }
+
+``void OutputText(string $data)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Output textual data.
+
+::
+
+    function OutputText($data)
+    {
+        fwrite(STDOUT, $data);
+    }
+
+``string Prompt(string $message)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Prompt the user for input and return it to the current command.
+
+::
+
+    function Prompt($message)
+    {
+        echo $message;
+
+        return fgets(STDIN);
+    }
+
+Development and Support
+=======================
+
+Reporting Problems and Suggestions
+----------------------------------
+If you run into a problem or would like to make a suggestion, please use the
+`PECL Bug Tracker`_.  Feel free to contact me directly for other issues, but
+please try to use the bug tracker whenever possible so that others in the
+community will benefit from your feedback and my responses.
+
+- `Open Bugs`_
+- `Report a New Bug`_
+
+.. _PECL Bug Tracker: http://pecl.php.net/bugs/
+.. _Open Bugs: http://pecl.php.net/bugs/search.php?cmd=display&status=Open&package_name[]=perforce
+.. _Report a New Bug: http://pecl.php.net/bugs/report.php?package=perforce
+
+Coming Soon
+-----------
+This section contains a list of "todo" items that will hopefully be addressed
+in future releases.
+
+- *No items at this time.*
+
+If you have feature suggestions, please submit them using the `PECL Bug
+Tracker`_.
+
+.. vim: tabstop=4 shiftwidth=4 softtabstop=4 expandtab textwidth=78 ft=rst:
