@@ -8,7 +8,11 @@
 	<meta name="author" content="Jon Parise">
 	<meta name="MSSmartTagsPreventParsing" content="true">
 	<meta name="viewport" content="width=700">
-
+	{% if page.url == '/index.html' %}
+	<link rel="me" href="http://en.wikipedia.org/wiki/User:Jparise">
+	<link rel="me" href="http://www.flickr.com/photos/jparise/">
+	<link rel="me" href="http://twitter.com/jparise">
+	{% endif %}
 	<link rel="stylesheet" type="text/css" media="screen" href="/css/screen.css">
 	<link rel="alternate" href="/feeds/ink/index.xml" title="Indelible Ink" type="application/atom+xml">
 	{% for category in page.categories %}
