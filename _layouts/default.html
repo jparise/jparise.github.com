@@ -41,15 +41,7 @@ Copyright &copy; 1999-{{ site.time | date:"%Y" }} by <a href="/about/">Jon Paris
 
 </div> <!-- /container -->
 
-<script type="text/javascript">
-var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-</script>
-<script type="text/javascript">
-try {
-var pageTracker = _gat._getTracker("UA-6933602-1");
-pageTracker._trackPageview();
-} catch(err) {}</script>
+{% include analytics.html %}
   
 </body>
 </html>
