@@ -139,5 +139,5 @@ To stop broadcasting, simply close the service descriptor (`sdref.close()`).
 [dns-sd]: http://www.dns-sd.org/
 [mdns]: http://www.multicastdns.org/
 [daap]: http://en.wikipedia.org/wiki/Digital_Audio_Access_Protocol
-[pybonjour]: http://o2s.csail.mit.edu/o2s-wiki/pybonjour
+[pybonjour]: http://code.google.com/p/pybonjour/
 [ctypes]: http://docs.python.org/library/ctypes.html
