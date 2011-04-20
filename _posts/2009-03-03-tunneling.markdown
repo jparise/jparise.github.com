@@ -4,14 +4,14 @@ title: Virtual Ethernet Tunneling
 ---
 
 This paper discusses the implementation of virtual Ethernet tunnels using
-[OpenBSD][openbsd].  The current release of OpenBSD at the time of writing
-(2001) was version 2.9, so some of the material may be fairly dated.  I
-haven't revisited the details since then.
+[OpenBSD][].  The current release of OpenBSD at the time of writing (2001) was
+version 2.9, so some of the material may be fairly dated.  I haven't revisited
+the details since then.
 
 ## Overview
 
 Without going too deep into the technical details, a virtual Ethernet tunnel
-uses packet encapsulation, Ethernet bridging, and [IPSec][ipsec] encryption to
+uses packet encapsulation, Ethernet bridging, and [IPSec][] encryption to
 tunnel a subnet from one host to another host over a public network
 (generally, the Internet).
 
@@ -69,20 +69,19 @@ uncommented:
     net.inet.esp.enable=1           # 1=Enable the ESP IPSec protocol
     net.inet.ah.enable=1            # 1=Enable the AH IPSec protocol
 
-These parameters can also be modified at runtime using the [sysctl][sysctl]
-tool.
+These parameters can also be modified at runtime using the [sysctl][] tool.
 
 ## ipsecadm and Security Associations
 
-OpenBSD includes a tool named [ipsecadm][ipsecadm] that is used for managing
-the system's security associations (SA's) and flows.  The tool accepts a
-number of arguments, but we'll mainly be working with the SA creation syntax:
+OpenBSD includes a tool named [ipsecadm][] that is used for managing the
+system's security associations (SA's) and flows.  The tool accepts a number of
+arguments, but we'll mainly be working with the SA creation syntax:
 
     ipsecadm new esp -spi 2000 -dst 66.24.105.57 -src 129.21.111.216 -enc 3des \
     -auth sha1 -key d09fffc3ebaee12362d65b38068dd381df89e4961ed282b3 -authkey \
     5ee0fc2cc2197fe24417934cac6db483b53eace3
 
-This command will create a new security association using the [esp][esp] IPSec
+This command will create a new security association using the [esp][] IPSec
 protocol.  We've assigned this entry an SPI (unique index) of 2000.  We also
 set the source and destination addresses for this SA.  Note that these are
 specific to the SA and don't assume anything about the host, meaning that the

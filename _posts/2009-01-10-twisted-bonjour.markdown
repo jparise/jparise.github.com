@@ -4,15 +4,15 @@ title: Twisted Python and Bonjour
 category: python
 ---
 
-[Bonjour][bonjour] (formerly Rendezvous) is Apple's [service
-discovery][dns-sd] protocol.  It operates over local networks via [multicast
-DNS][mdns].  Server processes announce their availability by broadcasting
-service records and their associated ports.  Clients browse the network in
-search of specific service types, potentially connecting to the service on the
-advertised port using the appropriate network protocol for that service.
+[Bonjour][] (formerly Rendezvous) is Apple's [service discovery][dns-sd]
+protocol.  It operates over local networks via [multicast DNS][mdns].  Server
+processes announce their availability by broadcasting service records and
+their associated ports.  Clients browse the network in search of specific
+service types, potentially connecting to the service on the advertised port
+using the appropriate network protocol for that service.
 
 A common example of Bonjour in action is iTunes' music library sharing
-feature.  iTunes sharing uses [DAAP][daap] (Digital Audio Access Protocol).
+feature.  iTunes sharing uses [DAAP][] (Digital Audio Access Protocol).
 iTunes uses Bonjour to announce its local shared libraries as well as to
 browse the network for remote DAAP servers.
 
@@ -33,12 +33,12 @@ On Mac OS 10.2 and later, applications can simply communicate with the
 operating system's built-in Bonjour service.  Most other operation systems
 don't provide native Bonjour functionality, but support is generally available
 via third-party packages.  Apple provides [Bonjour for Windows][bonjour-win],
-and the LGPL-licensed [Avahi][avahi] runs on most other platforms.
+and the LGPL-licensed [Avahi][] runs on most other platforms.
 
 Supporting multiple potential Bonjour interfaces can be a burden for
-application developers.  Fortunately, for Python-based projects,
-[pybonjour][pybonjour] exists to provide a very nice [ctypes][ctypes]-based
-abstraction layer to all of the Bonjour-compatible libraries mentioned above.
+application developers.  Fortunately, for Python-based projects, [pybonjour][]
+exists to provide a very nice [ctypes][]-based abstraction layer to all of the
+Bonjour-compatible libraries mentioned above.
 
 pybonjour's public API is based on "service descriptors".  Each operation
 returns a service descriptor reference and signals the caller via a callback

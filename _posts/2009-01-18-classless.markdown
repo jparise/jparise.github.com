@@ -29,7 +29,7 @@ our zone.
 All given configurations were tested using [BIND 8][bind] under both OpenBSD
 and FreeBSD circa 2000, but I expect they are still relevant today.
 
-Our assigned subnet was 206.126.7.64/27 (in [CIDR][cidr] notation).  Thus, our
+Our assigned subnet was 206.126.7.64/27 (in [CIDR][] notation).  Thus, our
 network address was 206.126.7.64 and our broadcast address was 206.126.7.95,
 giving us 30 usable host addresses in between. 
 

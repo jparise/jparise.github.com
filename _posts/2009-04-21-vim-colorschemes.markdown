@@ -4,10 +4,10 @@ title: Vim Color Schemes
 category: vim
 ---
 
-The [Vim][vim] text editor supports highly-configurable color schemes which
-build upon the editor's rich syntax highlighting system.  The stock Vim
-distribution includes a number of color schemes, and many more are available
-from the [Vim Scripts repository][scripts].
+The [Vim][] text editor supports highly-configurable color schemes which build
+upon the editor's rich syntax highlighting system.  The stock Vim distribution
+includes a number of color schemes, and many more are available from the [Vim
+Scripts repository][scripts].
 
 Color scheme definitions are simply normal Vim scripts that live in the
 `colors/` directory of the Vim runtime hierarchy (see `:help runtimepath`).
