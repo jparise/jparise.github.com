@@ -7,9 +7,7 @@
  <link href="{{ site.host }}{{ page.alternate }}" rel="alternate"/>
  <updated>{{ site.time | date_to_xmlschema }}</updated>
  <id>{{ site.host }}{{ page.alternate }}</id>
- <author>
-   <name>Jon Parise</name>
- </author>
+ <author><name>Jon Parise</name></author>
  <rights>Copyright 1999-{{ site.time | date:"%Y" }} by Jon Parise. All rights reserved.</rights>
 
  {% if page.category %}
@@ -24,6 +22,7 @@
    <link href="{{ site.host }}{{ post.url }}"/>
    <updated>{{ post.date | date_to_xmlschema }}</updated>
    <id>{{ site.host }}{{ post.id }}</id>
+   <author><name>Jon Parise</name></author>
    {% for category in post.categories %}<category term="{{ category | downcase }}" />{% endfor %}
    <content type="html">{{ post.content | xml_escape }}</content>
  </entry>
