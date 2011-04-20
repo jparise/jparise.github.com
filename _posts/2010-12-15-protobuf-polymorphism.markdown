@@ -12,8 +12,6 @@ this is accomplished differs from familiar C++ or Java-style inheritance.
 Instead, [message extension][extensions] is implemented by reserving some
 number of field indices in the base message for use by the extending messages.
 
-{% highlight protobuf %}
-
     message BaseType
     {
         // Reserve field numbers 100 to 199 for extensions.
@@ -30,8 +28,6 @@ number of field indices in the base message for use by the extending messages.
         optional float price = 100;
     }
 
-{% endhighlight %}
-
 But can protocol buffers model more flexible inheritance and polymorphism
 hierarchies?
 
@@ -41,8 +37,6 @@ One approach to implementing polymorphism involves the use of optional message
 fields defined in either the base message or in an extension.  Each "subclass"
 is defined as an independent message type that can optionally be included in
 the top-level message.
-
-{% highlight protobuf %}
 
     message Cat
     {
@@ -61,8 +55,6 @@ the top-level message.
         optional Cat cat = 3;
     }
 
-{% endhighlight %}
-
 This composition scheme is simple but has the property of allowing multiple
 nested message types to be filled out at the same time.  While desirable in
 some contexts, this means that the deserialization code must test for the
@@ -76,8 +68,6 @@ A second approach simply "embeds" the subclass's serialized contents within a
 `bytes` field in the parent message.  An explicit type field informs the
 deserialization code of the embedded message's type.
 
-{% highlight protobuf %}
-
     message Animal
     {
         enum Type
@@ -89,8 +79,6 @@ deserialization code of the embedded message's type.
         required Type type = 1;
         required bytes subclass = 2;
     }
-
-{% endhighlight %}
 
 This brute-force approach to the problem, which effective, is both inelegant
 and inefficient.  It can be useful where it is desirable to defer the
@@ -104,8 +92,6 @@ The final (and most generally recommended) approach uses a combination of
 types.  This works by having each subclass reference itself from within a
 nested extension of the base type.  An explicit type field is still required to
 guide the deserialization process.
-
-{% highlight protobuf %}
 
     message Animal
     {
@@ -141,8 +127,6 @@ guide the deserialization process.
         // These fields can use the full number range.
         optional uint32 bones_buried = 1;
     }
-
-{% endhighlight %}
 
 It may not be immediately obvious how to work with this message structure, so
 here's an example using the Python API:
@@ -190,13 +174,9 @@ It's a little unfortunate that there isn't a more obvious language syntax for
 expressing inheritance.  For example, many programmers would likely find these
 definitions familiar:
 
-{% highlight protobuf %}
-
     message Animal { ... }
     message Cat : Animal { ... }
     message Dog : Animal { ... }
-
-{% endhighlight %}
 
 There are of course open questions as to how this syntax would map to the
 underlying concepts of messages and extensions, but it shouldn't be too
