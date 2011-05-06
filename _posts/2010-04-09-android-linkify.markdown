@@ -24,14 +24,14 @@ TextView cases.
 
 ## TextView AutoLinking
 
-The TextView widget features an [android:autoLink][autolink] attribute that
+The TextView widget features an [`android:autoLink`][autolink] attribute that
 controls the types of text patterns that are automatically recognized and
 converted to clickable links.  This attribute is a convenient way to enable
 one or more of the default link patterns because it can be configured directly
 from a layout without involving any additional code.
 
 However, for those cases where programmatically setting this value is useful,
-the [setAutoLinkMask()][] function exists.
+the [`setAutoLinkMask()`][setAutoLinkMask()] function exists.
 
 There is one important caveat to using this "auto-linking" functionality,
 however.  It appears that when "auto-linking" is enabled, all additional
@@ -50,7 +50,7 @@ any of the Linkify operations discussed below.
 ## Default Link Patterns
 
 Enabling support for one of Android's default link patterns is very easy.
-Simply use the [addLinks(TextView text, int mask)][addLinks1] function and
+Simply use the [`addLinks(TextView text, int mask)`][addLinks1] function and
 specify a mask that describes the desired link types.
 
 {% highlight java %}
@@ -71,8 +71,8 @@ specify a mask that describes the desired link types.
 ## Custom Link Patterns
 
 Detecting additional types of link patterns is easy, too.  The
-[addLinks(TextView text, Pattern pattern, String scheme)][addLinks2] function
-detects links based on a regular expression pattern.
+[`addLinks(TextView text, Pattern pattern, String scheme)`][addLinks2]
+function detects links based on a regular expression pattern.
 
 {% highlight java %}
 

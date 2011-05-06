@@ -7,8 +7,9 @@ category: python
 Being able to reload code modules is one of the many nice features of
 [Python][].  This allows developers to modify parts of a Python application
 while the interpreter is running.  In general, all that needs to be done is
-pass a module object to the [imp.reload()][] function (or just [reload()][]
-in Python 2.x), and the module will be reloaded from its source file.
+pass a module object to the [`imp.reload()`][imp.reload()] function (or
+just [`reload()`][reload()] in Python 2.x), and the module will be reloaded
+from its source file.
 
 There are a few potential complications, however.
 
@@ -206,9 +207,9 @@ unsupported or unnecessary data.
 
 A nice feature of a reloading system is automatic detection of module changes.
 There are many ways to monitor the file system for source file changes.  The
-approach implemented here uses a background thread and the [stat()][] system
-call to watch each file's last modification time.  When an updated source file
-is detected, its filename is added to a [thread-safe queue][queue].
+approach implemented here uses a background thread and the [`stat()`][stat()]
+system call to watch each file's last modification time.  When an updated
+source file is detected, its filename is added to a [thread-safe queue][queue].
 
 {% highlight python %}
 
