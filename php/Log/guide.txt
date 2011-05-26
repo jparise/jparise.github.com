@@ -8,8 +8,8 @@
 
 :Author:        Jon Parise
 :Contact:       jon@php.net
-:Date:          $Date: 2010-11-11 23:53:10 -0800 (Thu, 11 Nov 2010) $
-:Revision:      $Revision: 305290 $
+:Date:          $Date: 2011-02-15 21:13:19 -0800 (Tue, 15 Feb 2011) $
+:Revision:      $Revision: 308379 $
 
 .. contents:: Contents
 .. section-numbering::
@@ -844,6 +844,10 @@ Configuration
 |                   |           |               | connection for this       |
 |                   |           |               | process, or start a new   |
 |                   |           |               | one via `openlog()`_?     |
++-------------------+-----------+---------------+---------------------------+
+| ``reopen``        | Boolean   | false         | Reopen the syslog         |
+|                   |           |               | connection for each log   |
+|                   |           |               | event?                    |
 +-------------------+-----------+---------------+---------------------------+
 | ``maxLength``     | Integer   | 500           | Maximum message length    |
 |                   |           |               | that will be sent to the  |
