@@ -110,6 +110,6 @@ You may also want to check out [Avoid RFC 2317 style delegation of
 opinion as to which method is the best solution for a given situation,
 however.
 
-[bind]: https://www.isc.org/products/BIND/
+[bind]: https://www.isc.org/software/bind
 [cidr]: http://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing
-[rfc2317]: http://www.faqs.org/rfcs/rfc2317.html
+[rfc2317]: http://tools.ietf.org/html/rfc2317
