@@ -66,7 +66,10 @@ Now, for this file, we add a slightly different entry to `named.conf`:
         };
     };
 
-Be sure to list your provider's name server(s) in the `masters {}` block. 
+Be sure to list your provider's name server(s) in the `masters {}` block.  As
+far as the provider is concerned, they are still the authoritative "master" of
+this IP address zone even though they delegate the mappings within our subnet
+to us.  We must act as the slave and participate in zone transfers.
 
 That's really all the subnet administrator has to worry about.  The rest of
 the work needs to be done on the provider's side.  In order for them to
@@ -97,7 +100,7 @@ The provider's `named.conf` should contain an entry like:
 
 That's really all there is to it.  It took me a couple of hours to muddle my
 way through all of the details (and making a few silly mistakes along the way
-didn't help much, either), but it's really not that complicated.  When a
+didn't help much either), but it's really not that complicated.  When a
 reverse DNS query is issued, it's sent to the authoritative name server (the
 provider's), who in turn delegates the request to the subnet's name servers,
 who then get the final say.  This is transparent to the querying client, and
