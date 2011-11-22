@@ -316,7 +316,8 @@ changes.  The simplest example would look like this:
 
 {% endhighlight %}
 
-The [complete source code package][source] is available on [GitHub][].
+The [complete source code][source] is on GitHub.  The package distribution is
+available as [`reloader`][pypi] on the Python Package Index.
 
 [python]: http://www.python.org/
 [imp.reload()]: http://docs.python.org/3.1/library/imp.html#imp.reload
@@ -327,4 +328,4 @@ The [complete source code package][source] is available on [GitHub][].
 [queue]: http://docs.python.org/library/queue.html
 [dcn]: http://msdn.microsoft.com/en-us/library/aa365261(VS.85).aspx
 [source]: https://github.com/jparise/python-reloader
-[github]: http://github.com/
+[pypi]: http://pypi.python.org/pypi/reloader/
