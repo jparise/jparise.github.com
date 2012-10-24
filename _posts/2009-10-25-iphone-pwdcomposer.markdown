@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Password Composer for iPhone
-category: iphone
+category: ios
 ---
 
 I often use [Password Composer][pwdcomposer] (written by Johannes la Poutré)

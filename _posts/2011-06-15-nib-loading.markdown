@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Manually Loading nib Files
-category: iphone
+category: ios
 ---
 
 [Interface Builder][ib] is the standard Mac OS and iOS user interface design
