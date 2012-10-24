@@ -113,6 +113,12 @@ Then, the connection delegate needs to handle the authentication challenge:
 
 {% endhighlight %}
 
+Trust failures will result in a connection failure:
+
+    The certificate for this server is invalid. You might be connecting
+    to a server that is pretending to be "api.example.com" which could
+    put your confidential information at risk.
+
 ## AFNetworking
 
 [AFNetworking][] implements the `NSURLConnectionDelegate` methods internally.
