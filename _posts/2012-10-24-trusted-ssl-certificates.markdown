@@ -125,7 +125,7 @@ Trust failures will result in a connection failure:
 Fortunately, it also exposes a block-based interface for supplying custom
 implementations of the necessary callbacks.  These are applied directly to
 `AFHTTPRequestOperation` objects, so a convenient place to set them is in a
-custom `AFHTTPRequestOperation:success:failure:` implementation.
+custom `HTTPRequestOperation:success:failure:` implementation.
 
 {% highlight objectivec %}
 
