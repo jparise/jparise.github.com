@@ -1,10 +1,10 @@
 ---
 layout: post
-title: Enforcing Trusted SSL Certificates on iOS and Mac
+title: Enforcing Trusted SSL Certificates on iOS and OS X
 category: ios
 ---
 
-One of the nice things about iOS and Mac networking is that it generally just
+One of the nice things about iOS and OS X networking is that it generally just
 works.  In particular, connecting to an SSL-protected host is a transparent
 operation for high-level code based on `NSURLConnection`.  As long as the
 authenticity of the remote host's public certificate can be verified, the
