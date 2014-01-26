@@ -38,7 +38,7 @@ public certificate.  This should be in [DER format][DER] (which is just a
 binary version of the more familiar [PEM format][PEM]).  To convert a
 certificate from PEM to DER format:
 
-{% highlight sh %}
+{% highlight console %}
 
 $ openssl x509 -inform PEM -outform DER -in cert.pem -out cert.der
 
