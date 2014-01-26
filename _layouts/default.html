@@ -8,6 +8,13 @@
 	<meta name="author" content="Jon Parise">
 	<meta name="MSSmartTagsPreventParsing" content="true">
 	<meta name="viewport" content="width=700">
+	<meta property="og:site_name" content="Indelible.org">
+	{% if page.path contains '_posts' %}
+	<meta property="og:type" content="article">
+	<meta property="og:title" content="{{ page.title }}">
+	<meta property="article:author" content="Jon Parise">
+	<meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}">
+	{% endif %}
 	{% if page.url == '/index.html' %}
 	<link rel="me" href="https://github.com/jparise">
 	<link rel="me" href="https://twitter.com/jparise">
