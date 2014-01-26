@@ -42,8 +42,8 @@ any of the Linkify operations discussed below.
 
 {% highlight java %}
 
-    // Disable the text view's auto-linking behavior
-    textView.setAutoLinkMask(0); 
+// Disable the text view's auto-linking behavior
+textView.setAutoLinkMask(0); 
 
 {% endhighlight %}
 
@@ -55,16 +55,16 @@ specify a mask that describes the desired link types.
 
 {% highlight java %}
 
-    import android.text.util.Linkify;
+import android.text.util.Linkify;
 
-    // Recognize phone numbers and web URLs
-    Linkify.addLinks(text, Linkify.PHONE_NUMBERS | Linkify.WEB_URLS);
+// Recognize phone numbers and web URLs
+Linkify.addLinks(text, Linkify.PHONE_NUMBERS | Linkify.WEB_URLS);
 
-    // Recognize all of the default link text patterns 
-    Linkify.addLinks(text, Linkify.ALL);
+// Recognize all of the default link text patterns 
+Linkify.addLinks(text, Linkify.ALL);
 
-    // Disable all default link detection
-    Linkify.addLinks(text, 0);
+// Disable all default link detection
+Linkify.addLinks(text, 0);
 
 {% endhighlight %}
 
@@ -76,13 +76,13 @@ function detects links based on a regular expression pattern.
 
 {% highlight java %}
 
-    import java.util.regex.Pattern;
-    import android.text.util.Linkify;
+import java.util.regex.Pattern;
+import android.text.util.Linkify;
 
-    // Detect US postal ZIP codes and link to a lookup service
-    Pattern pattern = Pattern.compile("\\d{5}([\\-]\\d{4})?");
-    String scheme = "http://zipinfo.com/cgi-local/zipsrch.exe?zip=";
-    Linkify.addLinks(text, pattern, scheme);
+// Detect US postal ZIP codes and link to a lookup service
+Pattern pattern = Pattern.compile("\\d{5}([\\-]\\d{4})?");
+String scheme = "http://zipinfo.com/cgi-local/zipsrch.exe?zip=";
+Linkify.addLinks(text, pattern, scheme);
 
 {% endhighlight %}
 
@@ -102,22 +102,22 @@ worthiness of some matched text.
 
 {% highlight java %}
 
-    import java.util.regex.Pattern;
-    import android.text.util.Linkify;
-    import android.text.util.Linkify.MatchFilter;
+import java.util.regex.Pattern;
+import android.text.util.Linkify;
+import android.text.util.Linkify.MatchFilter;
 
-    // A match filter that only accepts odd numbers.
-    MatchFilter oddFilter = new MatchFilter() {
-        public final boolean acceptMatch(CharSequence s, int start, int end) {
-            int n = Character.digit(s.charAt(end-1), 10);
-            return (n & 1) == 1;
-        }
-    };
+// A match filter that only accepts odd numbers.
+MatchFilter oddFilter = new MatchFilter() {
+    public final boolean acceptMatch(CharSequence s, int start, int end) {
+        int n = Character.digit(s.charAt(end-1), 10);
+        return (n & 1) == 1;
+    }
+};
 
-    // Match all digits in the pattern but restrict links to only odd
-    // numbers using the filter.
-    Pattern pattern = Pattern.compile("[0-9]+");
-    Linkify.addLinks(text, pattern, "http://...", oddFilter, null);
+// Match all digits in the pattern but restrict links to only odd
+// numbers using the filter.
+Pattern pattern = Pattern.compile("[0-9]+");
+Linkify.addLinks(text, pattern, "http://...", oddFilter, null);
 
 {% endhighlight %}
 
@@ -136,22 +136,22 @@ the text.  The [TransformFilter][] class provides a solution.
 
 {% highlight java %}
 
-    import java.util.regex.Pattern;
-    import android.text.util.Linkify;
-    import android.text.util.Linkify.TransformFilter;
+import java.util.regex.Pattern;
+import android.text.util.Linkify;
+import android.text.util.Linkify.TransformFilter;
 
-    // A transform filter that simply returns just the text captured by the
-    // first regular expression group.
-    TransformFilter mentionFilter = new TransformFilter() {
-        public final String transformUrl(final Matcher match, String url) {
-            return match.group(1);
-        }
-    };
+// A transform filter that simply returns just the text captured by the
+// first regular expression group.
+TransformFilter mentionFilter = new TransformFilter() {
+    public final String transformUrl(final Matcher match, String url) {
+        return match.group(1);
+    }
+};
 
-    // Match @mentions and capture just the username portion of the text.
-    Pattern pattern = Pattern.compile("@([A-Za-z0-9_-]+)");
-    String scheme = "http://twitter.com/";
-    Linkify.addLinks(text, pattern, scheme, null, mentionFilter);
+// Match @mentions and capture just the username portion of the text.
+Pattern pattern = Pattern.compile("@([A-Za-z0-9_-]+)");
+String scheme = "http://twitter.com/";
+Linkify.addLinks(text, pattern, scheme, null, mentionFilter);
 
 {% endhighlight %}
 

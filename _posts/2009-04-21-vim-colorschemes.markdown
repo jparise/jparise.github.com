@@ -19,7 +19,7 @@ For example, to load the stock *blue* color scheme (which is defined by the
 
 {% highlight vim %}
 
-    :colorscheme blue
+:colorscheme blue
 
 {% endhighlight %}
 
@@ -31,12 +31,12 @@ Start the script with the following commands:
 
 {% highlight vim %}
 
-    set background=dark "or light
-    highlight clear
-    if exists("syntax_on")
-        syntax reset
-    endif
-    let g:colors_name = "example"
+set background=dark "or light
+highlight clear
+if exists("syntax_on")
+    syntax reset
+endif
+let g:colors_name = "example"
 
 {% endhighlight %}
 
@@ -55,7 +55,7 @@ sets the colors for a single syntax group.  Setting the colors for the
 
 {% highlight vim %}
 
-    hi Comment ctermbg=black ctermfg=darkgrey guibg=#000000 guifg=#777777
+hi Comment ctermbg=black ctermfg=darkgrey guibg=#000000 guifg=#777777
 
 {% endhighlight %}
 
@@ -64,7 +64,7 @@ highlight settings), run the following command from within the editor:
 
 {% highlight vim %}
 
-    :source $VIMRUNTIME/syntax/hitest.vim
+:source $VIMRUNTIME/syntax/hitest.vim
 
 {% endhighlight %}
 
@@ -76,11 +76,11 @@ definitions based on various runtime values.  The presence of the
 
 {% highlight vim %}
 
-    if has('gui_running')
-        " GUI colors
-    else
-        " Non-GUI (terminal) colors
-    endif
+if has('gui_running')
+    " GUI colors
+else
+    " Non-GUI (terminal) colors
+endif
 
 {% endhighlight %}
 
@@ -89,9 +89,9 @@ queried via the `&t_Co` variable:
 
 {% highlight vim %}
 
-    if &t_Co > 255
-        " More than 256 colors are available
-    endif
+if &t_Co > 255
+    " More than 256 colors are available
+endif
 
 {% endhighlight %}
 
@@ -101,9 +101,9 @@ Color scheme scripts can support basic configuration using global variables.
 
 {% highlight vim %}
 
-    if exists("g:example_force_dark")
-        set background=dark
-    endif
+if exists("g:example_force_dark")
+    set background=dark
+endif
 
 {% endhighlight %}
 
@@ -112,8 +112,8 @@ color scheme script.
 
 {% highlight vim %}
 
-    let g:example_force_dark = 1
-    colorscheme example
+let g:example_force_dark = 1
+colorscheme example
 
 {% endhighlight %}
 

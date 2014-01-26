@@ -1,4 +1,3 @@
 host: http://www.indelible.org
-markdown: rdiscount
 permalink: /ink/:title/
 pygments: true

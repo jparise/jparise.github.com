@@ -44,35 +44,35 @@ import machinery.
 
 {% highlight python %}
 
-    import builtins
+import builtins
 
-    _baseimport = builtins.__import__
-    _dependencies = dict()
-    _parent = None
+_baseimport = builtins.__import__
+_dependencies = dict()
+_parent = None
 
-    def _import(name, globals=None, locals=None, fromlist=None, level=-1):
-        # Track our current parent module.  This is used to find our current
-        # place in the dependency graph.
-        global _parent
-        parent = _parent
-        _parent = name
+def _import(name, globals=None, locals=None, fromlist=None, level=-1):
+    # Track our current parent module.  This is used to find our current
+    # place in the dependency graph.
+    global _parent
+    parent = _parent
+    _parent = name
 
-        # Perform the actual import using the base import function.
-        m = _baseimport(name, globals, locals, fromlist, level)
+    # Perform the actual import using the base import function.
+    m = _baseimport(name, globals, locals, fromlist, level)
 
-        # If we have a parent (i.e. this is a nested import) and this is a
-        # reloadable (source-based) module, we append ourself to our parent's
-        # dependency list.
-        if parent is not None and hasattr(m, '__file__'):
-            l = _dependencies.setdefault(parent, [])
-            l.append(m)
+    # If we have a parent (i.e. this is a nested import) and this is a
+    # reloadable (source-based) module, we append ourself to our parent's
+    # dependency list.
+    if parent is not None and hasattr(m, '__file__'):
+        l = _dependencies.setdefault(parent, [])
+        l.append(m)
 
-        # Lastly, we always restore our global _parent pointer.
-        _parent = parent
+    # Lastly, we always restore our global _parent pointer.
+    _parent = parent
 
-        return m
+    return m
 
-    builtins.__import__ = _import
+builtins.__import__ = _import
 
 {% endhighlight %}
 
@@ -90,9 +90,9 @@ dependencies can be easily queried at runtime:
 
 {% highlight python %}
 
-    def get_dependencies(m):
-        """Get the dependency list for the given imported module."""
-        return _dependencies.get(m.__name__, None)
+def get_dependencies(m):
+    """Get the dependency list for the given imported module."""
+    return _dependencies.get(m.__name__, None)
 
 {% endhighlight %}
 
@@ -102,52 +102,52 @@ The next step is to build a dependency-aware `reload()` routine.
 
 {% highlight python %}
 
-    import imp
+import imp
 
-    def _reload(m, visited):
-        """Internal module reloading routine."""
-        name = m.__name__
+def _reload(m, visited):
+    """Internal module reloading routine."""
+    name = m.__name__
 
-        # Start by adding this module to our set of visited modules.  We use
-        # this set to avoid running into infinite recursion while walking the
-        # module dependency graph.
-        visited.add(m)
+    # Start by adding this module to our set of visited modules.  We use
+    # this set to avoid running into infinite recursion while walking the
+    # module dependency graph.
+    visited.add(m)
 
-        # Start by reloading all of our dependencies in reverse order.  Note
-        # that we recursively call ourself to perform the nested reloads.
-        deps = _dependencies.get(name, None)
-        if deps is not None:
-            for dep in reversed(deps):
-                if dep not in visited:
-                    _reload(dep, visited)
+    # Start by reloading all of our dependencies in reverse order.  Note
+    # that we recursively call ourself to perform the nested reloads.
+    deps = _dependencies.get(name, None)
+    if deps is not None:
+        for dep in reversed(deps):
+            if dep not in visited:
+                _reload(dep, visited)
 
-        # Clear this module's list of dependencies.  Some import statements
-        # may have been removed.  We'll rebuild the dependency list as part
-        # of the reload operation below.
-        try:
-            del _dependencies[name]
-        except KeyError:
-            pass
+    # Clear this module's list of dependencies.  Some import statements
+    # may have been removed.  We'll rebuild the dependency list as part
+    # of the reload operation below.
+    try:
+        del _dependencies[name]
+    except KeyError:
+        pass
 
-        # Because we're triggering a reload and not an import, the module
-        # itself won't run through our _import hook.  In order for this
-        # module's dependencies (which will pass through the _import hook) to
-        # be associated with this module, we need to set our parent pointer
-        # beforehand.
-        global _parent
-        _parent = name
+    # Because we're triggering a reload and not an import, the module
+    # itself won't run through our _import hook.  In order for this
+    # module's dependencies (which will pass through the _import hook) to
+    # be associated with this module, we need to set our parent pointer
+    # beforehand.
+    global _parent
+    _parent = name
 
-        # Perform the reload operation.
-        imp.reload(m)
+    # Perform the reload operation.
+    imp.reload(m)
 
-        # Reset our parent pointer.
-        _parent = None
+    # Reset our parent pointer.
+    _parent = None
 
-    def reload(m):
-        """Reload an existing module.
+def reload(m):
+    """Reload an existing module.
 
-        Any known dependencies of the module will also be reloaded."""
-        _reload(m, set())
+    Any known dependencies of the module will also be reloaded."""
+    _reload(m, set())
 
 {% endhighlight %}
 
@@ -171,15 +171,15 @@ Instead of simply calling `imp.reload()`, the code expands to:
 
 {% highlight python %}
 
-    # If the module has a __reload__(d) function, we'll call it with a
-    # copy of the original module's dictionary after it's been reloaded.
-    callback = getattr(m, '__reload__', None)
-    if callback is not None:
-        d = _deepcopy_module_dict(m)
-        imp.reload(m)
-        callback(d)
-    else:
-        imp.reload(m)
+# If the module has a __reload__(d) function, we'll call it with a
+# copy of the original module's dictionary after it's been reloaded.
+callback = getattr(m, '__reload__', None)
+if callback is not None:
+    d = _deepcopy_module_dict(m)
+    imp.reload(m)
+    callback(d)
+else:
+    imp.reload(m)
 
 {% endhighlight %}
 
@@ -188,18 +188,18 @@ unsupported or unnecessary data.
 
 {% highlight python %}
 
-    def _deepcopy_module_dict(m):
-        """Make a deep copy of a module's dictionary."""
-        import copy
+def _deepcopy_module_dict(m):
+    """Make a deep copy of a module's dictionary."""
+    import copy
 
-        # We can't deepcopy() everything in the module's dictionary because
-        # some items, such as '__builtins__', aren't deepcopy()-able.
-        # To work around that, we start by making a shallow copy of the
-        # dictionary, giving us a way to remove keys before performing the
-        # deep copy.
-        d = vars(m).copy()
-        del d['__builtins__']
-        return copy.deepcopy(d)
+    # We can't deepcopy() everything in the module's dictionary because
+    # some items, such as '__builtins__', aren't deepcopy()-able.
+    # To work around that, we start by making a shallow copy of the
+    # dictionary, giving us a way to remove keys before performing the
+    # deep copy.
+    d = vars(m).copy()
+    del d['__builtins__']
+    return copy.deepcopy(d)
 
 {% endhighlight %}
 
@@ -213,58 +213,58 @@ source file is detected, its filename is added to a [thread-safe queue][queue].
 
 {% highlight python %}
 
-    import os, sys, time
-    import queue, threading
+import os, sys, time
+import queue, threading
 
-    _win = (sys.platform == 'win32')
+_win = (sys.platform == 'win32')
 
-    class ModuleMonitor(threading.Thread):
-        """Monitor module source file changes"""
+class ModuleMonitor(threading.Thread):
+    """Monitor module source file changes"""
 
-        def __init__(self, interval=1):
-            threading.Thread.__init__(self)
-            self.daemon = True
-            self.mtimes = {}
-            self.queue = queue.Queue()
-            self.interval = interval
+    def __init__(self, interval=1):
+        threading.Thread.__init__(self)
+        self.daemon = True
+        self.mtimes = {}
+        self.queue = queue.Queue()
+        self.interval = interval
 
-        def run(self):
-            while True:
-                self._scan()
-                time.sleep(self.interval)
+    def run(self):
+        while True:
+            self._scan()
+            time.sleep(self.interval)
 
-        def _scan(self):
-            # We're only interested in file-based modules (not C extensions).
-            modules = [m.__file__ for m in sys.modules.values()
-                    if '__file__' in m.__dict__]
+    def _scan(self):
+        # We're only interested in file-based modules (not C extensions).
+        modules = [m.__file__ for m in sys.modules.values()
+                if '__file__' in m.__dict__]
 
-            for filename in modules:
-                # We're only interested in the source .py files.
-                if filename.endswith('.pyc') or filename.endswith('.pyo'):
-                    filename = filename[:-1]
+        for filename in modules:
+            # We're only interested in the source .py files.
+            if filename.endswith('.pyc') or filename.endswith('.pyo'):
+                filename = filename[:-1]
 
-                # stat() the file.  This might fail if the module is part
-                # of a bundle (.egg).  We simply skip those modules because
-                # they're not really reloadable anyway.
-                try:
-                    stat = os.stat(filename)
-                except OSError:
-                    continue
+            # stat() the file.  This might fail if the module is part
+            # of a bundle (.egg).  We simply skip those modules because
+            # they're not really reloadable anyway.
+            try:
+                stat = os.stat(filename)
+            except OSError:
+                continue
 
-                # Check the modification time.  We need to adjust on Windows.
-                mtime = stat.st_mtime
-                if _win32:
-                    mtime -= stat.st_ctime
+            # Check the modification time.  We need to adjust on Windows.
+            mtime = stat.st_mtime
+            if _win32:
+                mtime -= stat.st_ctime
 
-                # Check if we've seen this file before.  We don't need to do
-                # anything for new files.
-                if filename in self.mtimes:
-                    # If this file's mtime has changed, queue it for reload.
-                    if mtime != self.mtimes[filename]:
-                        self.queue.put(filename)
+            # Check if we've seen this file before.  We don't need to do
+            # anything for new files.
+            if filename in self.mtimes:
+                # If this file's mtime has changed, queue it for reload.
+                if mtime != self.mtimes[filename]:
+                    self.queue.put(filename)
 
-                # Record this filename's current mtime.
-                self.mtimes[filename] = mtime
+            # Record this filename's current mtime.
+            self.mtimes[filename] = mtime
 
 {% endhighlight %}
 
@@ -276,31 +276,31 @@ necessary.
 
 {% highlight python %}
 
-    import imp
-    import reloader
+import imp
+import reloader
 
-    class Reloader(object):
+class Reloader(object):
 
-        def __init__(self):
-            self.monitor = ModuleMonitor()
-            self.monitor.start()
+    def __init__(self):
+        self.monitor = ModuleMonitor()
+        self.monitor.start()
 
-        def poll(self):
-            filenames = set()
-            while not self.monitor.queue.empty():
-                try:
-                    filenames.add(self.monitor.queue.get_nowait())
-                except queue.Empty:
-                    break
-            if filenames:
-                self._reload(filenames)
+    def poll(self):
+        filenames = set()
+        while not self.monitor.queue.empty():
+            try:
+                filenames.add(self.monitor.queue.get_nowait())
+            except queue.Empty:
+                break
+        if filenames:
+            self._reload(filenames)
 
-        def _reload(self, filenames):
-            modules = [m for m in sys.modules.values()
-                    if getattr(m, '__file__', None) in filenames]
+    def _reload(self, filenames):
+        modules = [m for m in sys.modules.values()
+                if getattr(m, '__file__', None) in filenames]
 
-            for mod in modules:
-                reloader.reload(mod)
+        for mod in modules:
+            reloader.reload(mod)
 
 {% endhighlight %}
 
@@ -309,10 +309,10 @@ changes.  The simplest example would look like this:
 
 {% highlight python %}
 
-    r = Reloader()
-    while True:
-        r.poll()
-        time.sleep(1)
+r = Reloader()
+while True:
+    r.poll()
+    time.sleep(1)
 
 {% endhighlight %}
 

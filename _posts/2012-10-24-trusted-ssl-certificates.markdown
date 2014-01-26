@@ -38,7 +38,11 @@ public certificate.  This should be in [DER format][DER] (which is just a
 binary version of the more familiar [PEM format][PEM]).  To convert a
 certificate from PEM to DER format:
 
-    $ openssl x509 -inform PEM -outform DER -in cert.pem -out cert.der
+{% highlight sh %}
+
+$ openssl x509 -inform PEM -outform DER -in cert.pem -out cert.der
+
+{% endhighlight %}
 
 Then add the certificate to the application's resource bundle (or otherwise
 encode it in the application binary).  This is safe because it's only the

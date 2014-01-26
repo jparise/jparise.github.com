@@ -34,40 +34,40 @@ JavaScript.
 
 {% highlight html %}
 
-    <html>
-    <head>
-        <title>Password Composer</title>
-    </head>
-    <body>
+<html>
+<head>
+    <title>Password Composer</title>
+</head>
+<body>
 
-    <script type="text/javascript">
-    // Password Composer JavaScript
-    </script>
+<script type="text/javascript">
+// Password Composer JavaScript
+</script>
 
-    <h1>Password Composer</h1>
+<h1>Password Composer</h1>
 
-    <form>
-    <table>
-    <tr>
-        <td>Master Key:</td>
-        <td><input type="password" id="masterpwd1" onkeyup="mpwd_generate()"
-            onchange="mpwd_generate()"/></td>
-    </tr>
-    <tr>
-        <td>Domain:</td>
-        <td><input type="text" id="domain1" onkeyup="mpwd_generate()"
-            onchange="mpwd_generate()"/></td>
-    </tr>
-    <tr>
-        <td>Password:</td>
-        <td><input type="text" id="genpwd1" onkeyup="mpwd_generate()"
-            onchange="mpwd_generate()"/></td>
-    </tr>
-    </table>
-    </form>
+<form>
+<table>
+<tr>
+    <td>Master Key:</td>
+    <td><input type="password" id="masterpwd1" onkeyup="mpwd_generate()"
+        onchange="mpwd_generate()"/></td>
+</tr>
+<tr>
+    <td>Domain:</td>
+    <td><input type="text" id="domain1" onkeyup="mpwd_generate()"
+        onchange="mpwd_generate()"/></td>
+</tr>
+<tr>
+    <td>Password:</td>
+    <td><input type="text" id="genpwd1" onkeyup="mpwd_generate()"
+        onchange="mpwd_generate()"/></td>
+</tr>
+</table>
+</form>
 
-    </body>
-    </html>
+</body>
+</html>
 
 {% endhighlight %}
 
@@ -84,42 +84,42 @@ manageable for the time being.
 
 {% highlight css %}
 
-    body {
-        background-color: #ddd;
-        color: #222;
-        font-family: Helvetica; 
-        font-size: 14px;
-        margin: 0;
-        padding: 0;
-    }
+body {
+    background-color: #ddd;
+    color: #222;
+    font-family: Helvetica; 
+    font-size: 14px;
+    margin: 0;
+    padding: 0;
+}
 
-    h1 {
-        background-image: -webkit-gradient(linear, left top, left bottom,
-                                           from(#ccc), to(#aaa));
-        background-color: #ccc;
-        border-bottom: 1px solid #666;
-        color: #222;
-        font-size: 20px;
-        font-weight: bold;
-        padding: 10px 0;
-        text-align: center;
-        text-decoration: none;
-        text-shadow: 0px 1px 0px #ddd;
-    }
+h1 {
+    background-image: -webkit-gradient(linear, left top, left bottom,
+                                        from(#ccc), to(#aaa));
+    background-color: #ccc;
+    border-bottom: 1px solid #666;
+    color: #222;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 10px 0;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0px 1px 0px #ddd;
+}
 
-    form {
-        background-color: #FFFFFF;
-        border: 1px solid #999999;
-        color: #222222;
-        font-size: 15px;
-        padding: 12px 10px;
-        margin: 10px;
-        -webkit-border-radius: 8px;
-    }
+form {
+    background-color: #FFFFFF;
+    border: 1px solid #999999;
+    color: #222222;
+    font-size: 15px;
+    padding: 12px 10px;
+    margin: 10px;
+    -webkit-border-radius: 8px;
+}
 
-    td, input {
-        font-size: 14px;
-    }
+td, input {
+    font-size: 14px;
+}
 
 {% endhighlight %}
 
@@ -132,7 +132,7 @@ The next change is the addition of a `viewport` meta tag:
 
 {% highlight html %}
 
-    <meta name="viewport" content="user-scalable=no, width=device-width" />
+<meta name="viewport" content="user-scalable=no, width=device-width" />
 
 {% endhighlight %}
 
@@ -151,7 +151,7 @@ subset of the HTML5 input types, including the `url` type.
 
 {% highlight html %}
 
-    <input type="url" id="domain1">
+<input type="url" id="domain1">
 
 {% endhighlight %}
 
@@ -198,7 +198,7 @@ For Apache-like web servers, this can be configured using a directive like:
 
 {% highlight apacheconf %}
 
-    AddType text/cache-manifest .manifest
+AddType text/cache-manifest .manifest
 
 {% endhighlight %}
 
@@ -207,7 +207,7 @@ Lastly, the web page needs to specify its associated manifest file using the
 
 {% highlight html %}
 
-    <html manifest="pwdcomposer.manifest">
+<html manifest="pwdcomposer.manifest">
 
 {% endhighlight %}
 

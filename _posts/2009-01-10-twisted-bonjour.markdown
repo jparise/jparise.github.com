@@ -51,28 +51,28 @@ Twisted's `IReadDescriptor` interface:
 
 {% highlight python %}
 
-    import pybonjour
-    from twisted.internet.interfaces import IReadDescriptor
-    from zope import interface
+import pybonjour
+from twisted.internet.interfaces import IReadDescriptor
+from zope import interface
 
-    class ServiceDescriptor(object):
+class ServiceDescriptor(object):
 
-        interface.implements(IReadDescriptor)
+    interface.implements(IReadDescriptor)
 
-        def __init__(self, sdref):
-            self.sdref = sdref
+    def __init__(self, sdref):
+        self.sdref = sdref
 
-        def doRead(self):
-            pybonjour.DNSServiceProcessResult(self.sdref)
+    def doRead(self):
+        pybonjour.DNSServiceProcessResult(self.sdref)
 
-        def fileno(self):
-            return self.sdref.fileno()
+    def fileno(self):
+        return self.sdref.fileno()
 
-        def logPrefix(self):
-            return "bonjour"
+    def logPrefix(self):
+        return "bonjour"
 
-        def connectionLost(self, reason):
-            self.sdref.close()
+    def connectionLost(self, reason):
+        self.sdref.close()
 
 {% endhighlight %}
 
@@ -86,23 +86,23 @@ callback function handles both the success and error results.
 
 {% highlight python %}
 
-    from twisted.internet.defer import Deferred
+from twisted.internet.defer import Deferred
 
-    def broadcast(reactor, regtype, port, name=None):
-        def _callback(sdref, flags, errorCode, name, regtype, domain):
-            if errorCode == pybonjour.kDNSServiceErr_NoError:
-                d.callback((sdref, name, regtype, domain))
-            else:
-                d.errback(errorCode)
+def broadcast(reactor, regtype, port, name=None):
+    def _callback(sdref, flags, errorCode, name, regtype, domain):
+        if errorCode == pybonjour.kDNSServiceErr_NoError:
+            d.callback((sdref, name, regtype, domain))
+        else:
+            d.errback(errorCode)
 
-        d = Deferred()
-        sdref = pybonjour.DNSServiceRegister(name = name,
-                                            regtype = regtype,
-                                            port = port,
-                                            callBack = _callback)
+    d = Deferred()
+    sdref = pybonjour.DNSServiceRegister(name = name,
+                                        regtype = regtype,
+                                        port = port,
+                                        callBack = _callback)
 
-        reactor.addReader(ServiceDescriptor(sdref))
-        return d
+    reactor.addReader(ServiceDescriptor(sdref))
+    return d
 
 {% endhighlight %}
 
@@ -111,22 +111,22 @@ invoked using Twisted's event-based reactor machinery.
 
 {% highlight python %}
 
-    from twisted.internet import reactor
-    from twisted.python import log
+from twisted.internet import reactor
+from twisted.python import log
 
-    sdref = None
+sdref = None
 
-    def broadcasting(args):
-        global sdref
-        sdref  = args[0]
-        log.msg('Broadcasting %s.%s%s' % args[1:])
+def broadcasting(args):
+    global sdref
+    sdref  = args[0]
+    log.msg('Broadcasting %s.%s%s' % args[1:])
 
-    def failed(errorCode):
-        log.err(errorCode)
+def failed(errorCode):
+    log.err(errorCode)
 
-    d = broadcast(reactor, "_daap._tcp", 3689, "DAAP Server")
-    d.addCallback(broadcasting)
-    d.addErrback(failed)
+d = broadcast(reactor, "_daap._tcp", 3689, "DAAP Server")
+d.addCallback(broadcasting)
+d.addErrback(failed)
 
 {% endhighlight %}
 

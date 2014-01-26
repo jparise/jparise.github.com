@@ -14,21 +14,21 @@ number of field indices in the base message for use by the extending messages.
 
 {% highlight protobuf %}
 
-    message BaseType
-    {
-        // Reserve field numbers 100 to 199 for extensions.
-        extensions 100 to 199;
+message BaseType
+{
+    // Reserve field numbers 100 to 199 for extensions.
+    extensions 100 to 199;
 
-        // All other field numbers are available for use here.
-        required string name = 1;
-        optional uint32 quantity = 2;
-    }
+    // All other field numbers are available for use here.
+    required string name = 1;
+    optional uint32 quantity = 2;
+}
 
-    extend BaseType
-    {
-        // This extension can only use field numbers 100 to 199.
-        optional float price = 100;
-    }
+extend BaseType
+{
+    // This extension can only use field numbers 100 to 199.
+    optional float price = 100;
+}
 
 {% endhighlight %}
 
@@ -44,22 +44,22 @@ the top-level message.
 
 {% highlight protobuf %}
 
-    message Cat
-    {
-        optional bool declawed = 1;
-    }
+message Cat
+{
+    optional bool declawed = 1;
+}
 
-    message Dog
-    {
-        optional uint32 bones_buried = 1;
-    }
+message Dog
+{
+    optional uint32 bones_buried = 1;
+}
 
-    message Animal
-    {
-        required float weight = 1;
-        optional Dog dog = 2;
-        optional Cat cat = 3;
-    }
+message Animal
+{
+    required float weight = 1;
+    optional Dog dog = 2;
+    optional Cat cat = 3;
+}
 
 {% endhighlight %}
 
@@ -78,17 +78,17 @@ deserialization code of the embedded message's type.
 
 {% highlight protobuf %}
 
-    message Animal
+message Animal
+{
+    enum Type
     {
-        enum Type
-        {
-            Cat = 1;
-            Dog = 2;
-        }
-
-        required Type type = 1;
-        required bytes subclass = 2;
+        Cat = 1;
+        Dog = 2;
     }
+
+    required Type type = 1;
+    required bytes subclass = 2;
+}
 
 {% endhighlight %}
 
@@ -107,40 +107,40 @@ guide the deserialization process.
 
 {% highlight protobuf %}
 
-    message Animal
+message Animal
+{
+    extensions 100 to max;
+
+    enum Type
     {
-        extensions 100 to max;
-
-        enum Type
-        {
-            Cat = 1;
-            Dog = 2;
-        }
-
-        required Type type = 1;
+        Cat = 1;
+        Dog = 2;
     }
 
-    message Cat
-    {
-        extend Animal
-        {
-            required Cat animal = 100; // Unique Animal extension number
-        }
+    required Type type = 1;
+}
 
-        // These fields can use the full number range.
-        optional bool declawed = 1;
+message Cat
+{
+    extend Animal
+    {
+        required Cat animal = 100; // Unique Animal extension number
     }
 
-    message Dog
-    {
-        extend Animal
-        {
-            required Dog animal = 101; // Unique Animal extension number
-        }
+    // These fields can use the full number range.
+    optional bool declawed = 1;
+}
 
-        // These fields can use the full number range.
-        optional uint32 bones_buried = 1;
+message Dog
+{
+    extend Animal
+    {
+        required Dog animal = 101; // Unique Animal extension number
     }
+
+    // These fields can use the full number range.
+    optional uint32 bones_buried = 1;
+}
 
 {% endhighlight %}
 
@@ -149,31 +149,31 @@ here's an example using the Python API:
 
 {% highlight python %}
 
-    from animals_pb2 import *
+from animals_pb2 import *
 
-    # Construct the polymorphic base message type.
-    animal = Animal()
-    animal.type = Animal.Cat
+# Construct the polymorphic base message type.
+animal = Animal()
+animal.type = Animal.Cat
 
-    # Create the subclass type by referencing the appropriate extension type.
-    # Note that this uses the self-referential field (Cat.animal) from within
-    # nested message extension.
-    cat = animal.Extensions[Cat.animal]
-    cat.declawed = True
+# Create the subclass type by referencing the appropriate extension type.
+# Note that this uses the self-referential field (Cat.animal) from within
+# nested message extension.
+cat = animal.Extensions[Cat.animal]
+cat.declawed = True
 
-    # Serialize the complete message contents to a string.  It will end up
-    # looking roughly like this: [ type [ declawed ] ]
-    bytes = animal.SerializeToString()
+# Serialize the complete message contents to a string.  It will end up
+# looking roughly like this: [ type [ declawed ] ]
+bytes = animal.SerializeToString()
 
-    # ---
+# ---
 
-    # Unpack the serialized bytes.
-    animal = Animal()
-    animal.ParseFromString(bytes)
+# Unpack the serialized bytes.
+animal = Animal()
+animal.ParseFromString(bytes)
 
-    # Determine the appropriate extension type to use.
-    extension_map = { Animal.Cat: Cat.animal, Animal.Dog: Dog.animal }
-    extension = animal.Extensions[extension_map[animal.type]]
+# Determine the appropriate extension type to use.
+extension_map = { Animal.Cat: Cat.animal, Animal.Dog: Dog.animal }
+extension = animal.Extensions[extension_map[animal.type]]
 
 {% endhighlight %}
 
