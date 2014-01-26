@@ -216,7 +216,7 @@ Each bridge can have an arbitrary number of interfaces added to it.  These
 interfaces can either be physical network interfaces or virtual encapsulation
 interfaces (such as the `gif` interface).
 
-More detailed information is available in the [manpage][bright].
+More detailed information is available in the [manpage][bridge].
 
 Bridge configuration can also be performed upon boot.  This is accomplished
 through the `/etc/bridgename.bridge0` file.  Here's mine:
