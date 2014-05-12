@@ -1,3 +1,5 @@
 host: http://www.indelible.org
 permalink: /ink/:title/
 pygments: true
+gems:
+  - jekyll-sitemap
