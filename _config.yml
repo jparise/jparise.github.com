@@ -2,7 +2,6 @@ host: http://www.indelible.org
 author:
     name: Jon Parise
 permalink: /ink/:title/
-markdown: kramdown
 highlighter: pygments
 gems:
   - jekyll-feed
