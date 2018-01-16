@@ -3,6 +3,6 @@ author:
     name: Jon Parise
 permalink: /ink/:title/
 highlighter: rouge
-gems:
+plugins:
   - jekyll-feed
   - jekyll-sitemap
