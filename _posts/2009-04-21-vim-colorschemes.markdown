@@ -30,8 +30,8 @@ script file in the `colors/` directory based on the name of the new scheme.
 Start the script with the following commands:
 
 {% highlight vim %}
-
-set background=dark "or light
+set background=dark
+"or background=light
 highlight clear
 if exists("syntax_on")
     syntax reset
