@@ -222,8 +222,7 @@ manifest file to check for updates, but the application will otherwise be
 running entirely from the cache, essentially making it a local iPhone
 application.
 
-My version is deployed here:
-[http://www.indelible.org/pwdcomposer/](http://www.indelible.org/pwdcomposer/)
+My version is deployed here: <https://www.indelible.org/pwdcomposer/>
 
 The [complete source code][source] is available on [GitHub][github].
 
